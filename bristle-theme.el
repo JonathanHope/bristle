@@ -262,7 +262,16 @@
 
  ;; markdown
  '(markdown-markup-face                ((t (:foreground "#65737e"))))
+ '(markdown-header-face-1              ((t (:foreground "#a3be8c" :weight bold))))
+ '(markdown-header-face-2              ((t (:foreground "#a3be8c" :weight bold))))
+ '(markdown-header-face-3              ((t (:foreground "#a3be8c" :weight bold))))
+ '(markdown-header-face-4              ((t (:foreground "#a3be8c" :weight bold))))
+ '(markdown-header-face-5              ((t (:foreground "#a3be8c" :weight bold))))
+ '(markdown-header-face-6              ((t (:foreground "#a3be8c" :weight bold))))
+ '(markdown-code-face                  ((t (:background "#343a47"))))
+ '(markdown-pre-face                   ((t (:background "#343a47"))))
 
+ 
  ;; notmuch
  '(notmuch-tag-face ((t (:foreground "#ebcb8b"))))
  '(notmuch-tag-unread ((t (:foreground "#bf616a"))))

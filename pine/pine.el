@@ -96,7 +96,10 @@ Falls back to `default-directory' if no project found."
 
 (defun pine--create-buffer (directory)
   "Create a dired buffer for DIRECTORY."
-  (let ((buffer (dired-noselect directory)))
+  ;; this prevents the sidebar from reusing an existing buffer
+  (let ((buffer (cl-letf (((symbol-function 'dired-find-buffer-nocreate)
+                           (lambda (&rest _args) nil)))
+                  (dired-noselect directory))))
     (with-current-buffer buffer
       (pine-mode)
       buffer)))

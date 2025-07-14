@@ -224,6 +224,7 @@
    '((bash-mode . bash-ts-mode)
      (sh-mode . bash-ts-mode)))
 
+  ;; start the scratch file in text mode
   (initial-major-mode 'text-mode)
   
   :config
@@ -283,6 +284,7 @@
 
   ;; disable suspend frame
   (unbind-key "C-z" global-map)
+  (unbind-key "C-x C-z" global-map)
   
   ;; turn off the blinking cursor
   (blink-cursor-mode -1)
@@ -324,7 +326,11 @@
   (add-to-list 'auto-mode-alist '("LICENSE\\'" . text-mode))
 
   ;; safe dir local vars
-  (put 'dape-configs 'safe-local-variable #'listp))
+  (put 'dape-configs 'safe-local-variable #'listp)
+
+  ;; osx specific handling
+  (when (eq system-type 'darwin)
+    (setq insert-directory-program "gls")))
 
 ;; useful functions
 

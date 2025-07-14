@@ -24,6 +24,8 @@ Bristle requires the following CLI tools to installed, and on the path.
  - ~docker~
  - ~pandoc~
  - ~duckdb~
+ - ~npx (node)~
+ - ~ulv (ul)~
 
 ** Languages
 

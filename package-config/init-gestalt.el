@@ -351,6 +351,7 @@
    :lighter " [RGN]"
    :keymap (gestalt-make-command-map
             '("i" . ("insert" . bristle--region-insert))
+            '("p" . ("pair" . gestalt-pair-transient-facet))
             '("." . ("mode specific" . bristle--invoke-mode-region-facet))
             '("y" . ("yank" . bristle--region-yank))
             '(";" . ("summarize" . gptel-quick))
@@ -367,6 +368,8 @@
             '("-" . ("contract" . expreg-contract))
             '("[" . ("line beg" . bristle--region-bol))
             '("]" . ("line end" . bristle--region-eol))
+            '("{" . ("buffer beg" . bristle--region-bob))
+            '("}" . ("buffer end" . bristle--region-eob))
             '("DEL" . ("delete region" . delete-region))
             '("c" . ("clone" . duplicate-dwim))
             '("r" . ("replace" . bristle--replace))
@@ -383,11 +386,6 @@
             '("d" . ("downcase" . downcase-region))
             '("n" . ("narrow" . narrow-to-region))
             '("f" . ("flush lines" . consult-keep-lines))
-            '("{" . ("{}" . bristle--pair-curly))
-            '("'" . ("''" . bristle--pair-single-quote))
-            '("\"" . ("\"\"" . bristle--pair-double-quote))
-            '("`" . ("``" . bristle--pair-backtick))
-            '("(" . ("()" . bristle--pair-parens))
             '("?" . ("legend" . bristle--legend-toggle))))
 
   (defun bristle--invoke-mode-region-facet ()
@@ -452,7 +450,10 @@ The mark is deactivated if point and mark would be inverted."
     (if (= (point) (mark))
         (bristle--mark-thing 'line)
       (bristle--maybe-deactivate
-       (lambda () (forward-line 1) (beginning-of-line)))))
+       (lambda () 
+         (forward-line 1)
+         (unless (eobp)
+           (beginning-of-line))))))
 
   (defun bristle--region-backward-line ()
     "Move backward by one line in the context of a region."
@@ -497,16 +498,30 @@ The mark is deactivated if point and mark would be inverted."
   (defun bristle--region-eol ()
     "Move point to end of region, then to end of line."
     (interactive)
-    (if (/= (point) (region-end))
-          (exchange-point-and-mark)
-        (end-of-line)))
+    (when (/= (point) (region-end))
+      (exchange-point-and-mark))
+    (end-of-line))
   
   (defun bristle--region-bol ()
     "Move point to start of region, then to beginning of line."
     (interactive)
-    (if (/= (point) (region-beginning))
-          (exchange-point-and-mark)
-        (beginning-of-line)))
+    (when (/= (point) (region-beginning))
+      (exchange-point-and-mark))
+    (beginning-of-line))
+
+  (defun bristle--region-eob ()
+    "Move point to end of region, then to end of buffer."
+    (interactive)
+    (when (/= (point) (region-end))
+      (exchange-point-and-mark))
+    (end-of-buffer))
+
+  (defun bristle--region-bob ()
+    "Move point to start of region, then to beginning of buffer."
+    (interactive)
+    (when (/= (point) (region-beginning))
+      (exchange-point-and-mark))
+    (beginning-of-buffer))
   
   (defun bristle--region-insert ()
     "Overwrite the current region using insert mode."
@@ -573,6 +588,15 @@ The mark is deactivated if point and mark would be inverted."
                (setq deactivate-mark nil))
       (self-insert-command N)))
 
+  (gestalt-define-transient-facet
+   pair
+   '("{" . ("{}" . bristle--pair-curly))
+   '("'" . ("''" . bristle--pair-single-quote))
+   '("\"" . ("\"\"" . bristle--pair-double-quote))
+   '("`" . ("``" . bristle--pair-backtick))
+   '("(" . ("()" . bristle--pair-parens))
+   '("[" . ("[]" . bristle--pair-square)))
+  
   (defun bristle--pair (open close)
     "Wrap the current region in a pair."
     (interactive)
@@ -604,6 +628,11 @@ The mark is deactivated if point and mark would be inverted."
     "Wrap the current region in a pair of curly braces"
     (interactive)
     (bristle--pair ?\{ ?\}))
+
+  (defun bristle--pair-square ()
+    "Wrap the current region in a pair of square braces"
+    (interactive)
+    (bristle--pair ?\[ ?\]))
 
   ;; rectangle facet
   ;; this facet expands and acts upon a rectangle region of selected text
@@ -1394,7 +1423,8 @@ The mark is deactivated if point and mark would be inverted."
                                                    "terraform"
                                                    "verb"
                                                    "xml"
-                                                   "duckdb"))))
+                                                   "duckdb"
+                                                   "emacs-lisp"))))
     (let ((begin-src-line 
            (cond ((equal arg "mermaid")
                   (format "#+BEGIN_SRC %s :file \"%s.svg\" :mermaid-config-file \"%smermaid-config.json\" :background-color transparent" 

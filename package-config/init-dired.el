@@ -9,6 +9,7 @@
   (add-hook 'dired-mode-hook 'dired-mode-setup)
   
   :custom
+  (dired-use-ls-dired t)
   (dired-listing-switches "-alh --group-directories-first")
   (dired-free-space nil)
 
