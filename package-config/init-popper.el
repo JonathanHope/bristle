@@ -1,0 +1,75 @@
+;; -*- lexical-binding: t; -*-
+
+(use-package popper
+  :straight t
+  :bind (("C-`" . popper-toggle)
+         ("C-~" . eshell)
+         ("M-`" . popper-cycle)
+         ("C-M-`" . popper-toggle-type))
+
+  :init
+  (setq popper-reference-buffers
+        '("\\*Messages\\*"
+          "\\*Warnings\\*"
+          "Output\\*$"
+          "\\*Async Shell Command\\*"
+          "\\*Legend\\*"
+          "\\*eshell\\*"
+          "\\*eldoc\\*"
+          "\\*HTTP Response.*\\*"
+          "\\*HTTP Headers.*\\*"
+          "\\*Verb Variables\\*"
+          "\\*pandoc\\*"
+          "\\*docker-.*\\*"
+          "\\*llm-scratch\\*"
+          "\\*json\\*"
+          "\\*jwt\\*"
+          "\\*dape-repl\\*"
+          "\\*Mcp-Hub\\*"
+          help-mode
+          compilation-mode
+          elisp-compile-mode))
+  (popper-mode +1)
+
+  :custom
+  (popper-window-height 0.33)
+  (popper-display-function #'bristle--popper-display-function)
+  (popper-mode-line "")
+
+  :config
+  (defun bristle--popper-display-function (buffer &optional alist)
+  "Display popup BUFFER at bottom, with conditional selection."
+  (let ((window (display-buffer-in-side-window
+                 buffer
+                 (append alist
+                         `((side . bottom)
+                           (slot . 0))))))
+    (when window
+      (when (bristle--should-select-popup-p buffer)
+        (select-window window))
+      window)))
+
+  (defun bristle--should-select-popup-p (buffer)
+    "Return t if BUFFER should be selected when displayed as popup."
+    (with-current-buffer buffer
+      (cond
+       ((eq major-mode 'eshell-mode) t)
+       ((string= (buffer-name) "*Legend*") nil)
+       ((string= (buffer-name) "*Messages*") nil)
+       (t t))))
+
+  ;; popper and transient both try to use a dedicated bottom window
+  ;; if popper is active we switch it to a popup buffer
+  ;; this way it appears above the popper
+
+  (defun bristle--popper-aware-transient-display-action (orig-fun &rest args)
+    "Use pop-up-window for transient when invoked from a popper buffer."
+    (if (and (bound-and-true-p popper-popup-status)
+             (memq popper-popup-status '(popup user-popup)))
+        '(display-buffer-pop-up-window
+          (inhibit-same-window . t))
+      (apply orig-fun args)))
+  
+  (advice-add 'transient--display-action :around #'bristle--popper-aware-transient-display-action))
+
+(provide 'init-popper)

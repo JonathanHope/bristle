@@ -1,0 +1,27 @@
+* On Names
+
+This package will be called /soma/.
+
+It is named after one of the forms of memory plants (like trees) have: /somatic/.
+
+* On The Simplicity of Text
+
+Denote is wonderfully simple in that it just proposes a good naming scheme, and a good standard for front matter. _All_ of the metadata is in the filename, or front matter of the file. Because everything is text we can use the myriad of tools for text on them like the wonderful ~rg~.
+
+* On Searching Notes
+
+This package first gathers the notes based on a query in the denote directory. It does this with a number of heuristics:
+
+ - Must have ~.org~ extension
+ - Must have denote identifier slug in filename
+ - Query must match title in front matter
+
+Given all of those we get up to 50 matches. Because this is all done with ~rg~ it will happen _very_ fast even for large amounts of notes.
+
+* On Note Metadata
+
+Once we have the notes we extract the metadata from them. This is done using the front matter. Because we only care about the first handlful of lines, and we are only doing this for at most 50 files we can do this with pure elisp.
+
+* On Viewing the Notes
+
+Now that we have the notes and their metadata we need to display them. This is a case where ~consult~ is perfect. It is intrinsically async, and is already used for very similar purposes like direct ~rg~ usage.

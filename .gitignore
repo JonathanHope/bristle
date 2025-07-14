@@ -1,0 +1,9 @@
+straight
+*.eld
+eln-cache
+eshell/
+tramp
+elpa/
+ltximg/
+tree-sitter/
+.cache/

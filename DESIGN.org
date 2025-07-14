@@ -1,0 +1,616 @@
+* Bristle
+
+#+begin_quote
+The term bristlecone pine covers three species of pine tree (family Pinaceae, genus Pinus, subsection Balfourianae). All three species are long-lived and highly resilient to harsh weather and bad soils.
+#+end_quote
+
+The name is taken from the bristlecone pine. Like those trees Emacs is tough and long lived. It was around before me, and it will be around after me.
+
+* Internal Packages
+
+Bristle has many internal packages that it makes use of. They are integrated into in a monorepo manner.
+
+** Gestalt
+
+Gestalt is the low level plumbing to add modal editing to Emacs. It is intended to be a replacement for things like ~meow~/~Evil~ as well as things like ~hydra~.
+
+The primary building block is called a /facet/. A facet is effectively a persistent high priority keymap. They come in two flavors:
+
+ - /command/: by default non-modified keys do nothing
+ - /insert/: by default it has no behavior at all
+
+Only one facet can be active at a time, and the facet will change upon major mode change. Gestalt has no behavior at all by default; all behavior must be built on top of it.
+
+There are two other kinds of facets:
+
+ - /transient/: only lasts as long as a keypress; can be used for leader key esque behavior
+ - /override/: persistent facet that has ultimate priority; can be thought of like ~hydra~
+
+** Legend
+
+Legend is package to display the key bindings in a keymap. It does so in a format like ~which-key~. However unlike ~which-key~ that is all it does.
+
+** Pine
+
+Pine is a package that shows a fixed size dired buffer on the left of the screen. This package is very similar to ~dired-sidebar~, but it is much more narrowly focused than that package.
+
+** Stadion
+
+I really like taskfiles. Emacs has a built in way to execute a build command, and then view the results: ~compile~. This package glues those things together. It prompts for a task using completing read, and then runs it with ~compile~.
+
+** Soma
+
+When looking for a note I like to view the friendly title in the front matter instead of the full denote name. This package uses ~rg~ and ~consult~ to give me a nice way to search through the titles of my notes
+
+** ob-go
+
+~ob-go~ provides minimalist support for executing Go in org docs. The biggest difference between it and other implementations is that it executes the code in the same directory as the org doc so it's ~go.mod~ friendly.
+
+** ob-typescript
+
+~ob-typescript~ provides minimalist support for executing ts in org docs. It does this using ~tsx~ which is fast and supports ts. Because it executes in the same directory as the org doc it's ~package.json~ friendly.
+
+* Facets
+
+This section describes the overall philosophy of the facet design in Bristle.
+
+** Escape
+
+Not a facet, but something that intersects with them is the escape key. It does _many_ things:
+
+ - if a region is active deactivated it (including rectangle regions)
+ - if an eshell process is running cancel it
+ - if a minibuffer is open close it
+ - if a transient facet is active deactivate it
+ - if a child facet is activate dectivate it then activate the parent facet
+ - if an override facet is active deactivate it
+ - if in wdired mode abort it
+
+** System Facet
+
+The /system/ facet is the one and only override facet in Bristle. This is a pattern I have used for a long time, previously with hydra. What this facet does is enable the management of windows and frames quickly and efficiently from _anywhere_ in Emacs. Since it can be accessed anywhere it must be an override facet. It is bound ~C-S-<tab>~ which is pretty esoteric, but given that it must be accessible everywhere that is to be expected.
+
+| *Key*       | *Remarks*                              |
+|-------------+----------------------------------------|
+| ~<right>~   | select window to the right             |
+| ~<left>~    | select window to the left              |
+| ~<up>~      | select window above                    |
+| ~<down>~    | select window below                    |
+| ~S-<right>~ | grow selected window right             |
+| ~S-<left>~  | grow selected window left              |
+| ~S-<up>~    | grow selected window up                |
+| ~S-<down>~  | grow selected window down              |
+| ~_~         | split selected window vertical         |
+| ~⏐~         | split selected window horizontal       |
+| ~f~         | find file in selected window           |
+| ~b~         | switch buffer in selected window       |
+| ~d~         | delete selected window                 |
+| ~a~         | open an app in selected window         |
+| ~m~         | toggle a minor mode in selected window |
+| ~c~         | create a new frame                     |
+| ~o~         | select other frame                     |
+| ~D~         | delete the selected frame              |
+| ~t~         | toggle the tree sidebar                |
+| ~p~         | switch the font preset                 |
+| ~n~         | grep note titles                       |
+| ~N~         | create a new note                      |
+| ~+~         | create a new tab                       |
+| ~x~         | close a tab                            |
+| ~s~         | select a tab                           |
+| ~?~         | toggle the legend                      |
+
+*Notes:*
+
+ - ~windmove~ is used to shift focus around because it is built in and an acceptably elegant solution
+ - The goal here is to emulate how a simple tiling window manager might work
+ - Frame support is plumbed through for multiple monitors
+ - What Emacs calls tabs are really more like workspaces; they are used as such here
+
+** Move Facet
+
+The /move/ facet is where modes that aren't TUIs start. As the name implies it is primarily about getting around.
+
+| *Key*     | *Remarks*                       |
+|-----------+---------------------------------|
+| ~i~       | activate insert facet           |
+| ~l~       | activate line facet             |
+| ~t~       | activate todo facet             |
+| ~m~       | activate region facet           |
+| ~r~       | activate rectangle region facet |
+| ~p~       | activate point facet            |
+| ~$~       | activate spelling facet         |
+| ~.~       | activate mode specific facet    |
+| ~/~       | activate lsp facet              |
+| ~<space>~ | activate leader facet           |
+| ~-~       | undo                            |
+| ~=~       | redo                            |
+| ~y~       | yank                            |
+| ~Y~       | select then yank                |
+| ~w~       | move to next word               |
+| ~W~       | move to previous word           |
+| ~s~       | move to next sexp               |
+| ~S~       | move to previous sexp           |
+| ~f~       | jump to line by match           |
+| ~g~       | jump to line by number          |
+| ~d~       | jump to definition              |
+| ~j~       | jump to visible text            |
+| ~[~       | jump to start of line           |
+| ~]~       | jump to end of line             |
+| ~{~       | jump to start of buffer         |
+| ~}~       | jump to end of buffer           |
+| ~n~       | remove narrowing                |
+| ~B~       | jump to last buffer             |
+| ~o~       | insert space at point           |
+| ~!~       | save                            |
+| ~?~       | toggle the legend               |
+
+*Notes:**
+
+ - undo and redo use the built in faculties now that Emacs has ~undo-only~ and ~undo-redo~
+ - copying and pasting is done with the kill ring
+   - when Emacs is running as a GUI it has an acceptable integration with system clipboards
+ - arrows are still how per char/line movement occurs; I just like them
+ - movement commands around things like words and sexps use Emacs built in syntax table facilities
+ - many of the jump commands use ~consult~ to give real time feedback for where they are taking you
+ - ~avy~ is used to oblivate the mouse when there isn't a clear syntactic 
+ - I often find myself jumping back and forth between two files (SUT/tests); the buffer jump command accelerates that
+ - When move backward a lot you can simply use caps lock instead of holding shift
+
+** Insert Facet
+
+The /insert/ facet behaves just like Emacs does. As you might imagine it is used to insert text.
+
+The one bit of cleverness it has is the tab key which can do many things:
+
+ - expand template if there is one
+ - indent if line is not already indented
+ - complete at point
+
+Order matters.
+ 
+** Point Facet
+
+The /point/ facet is used to set a location you want to jump back to quickly. I often find myself going off to review similar code and/or docs, and then jumping back. It is implemented using registers. Each point is assigned a letter starting from ~Z~ down through ~A~. It does this to keep the most recent points on top in completion UIs (bear in mind that a register must be named a single char). The actions in this facet are not particularly repeatable so it is a transient facet.
+
+| *Key* | *Remarks*              |
+|-------+------------------------|
+| ~a~   | add a point            |
+| ~j~   | jump to a point        |
+| ~c~   | clear all saved points |
+
+** ~TODO~ Facet
+
+The /todo/ facet is used to move around between todos in a buffer. I make heavy use of todos so I highlight them, and use this facet to review them.
+
+| *Key* | *Remarks*         |
+|-------+-------------------|
+| ~n~   | next todo         |
+| ~p~   | previous todo     |
+| ~?~   | toggle the legend |
+
+** Spelling Facet
+
+The /spelling/ facet is used to move around between spelling errors in a buffer, and fix them. It does with the excellent ~jinx~ package which is fast and clever enough to pretty much always have running.
+
+| *Key* | *Remarks*               |
+|-------+-------------------------|
+| ~n~   | next spelling error     |
+| ~p~   | previous spelling error |
+| ~c~   | correct spelling error  |
+| ~!~   | save                    |
+| ~-~   | undo                    |
+| ~=~   | redo                    |
+| ~?~   | toggle the legend       |
+
+** LSP Facet
+
+Programming language intelligence is provided by language servers using the built in ~elgot~ package. This facet has commands to interact with ~elgot~. These tend to be fire and forget so this is a transient facet.
+
+| *Key* | *Remarks*         |
+|-------+-------------------|
+| ~d~   | goto definition   |
+| ~r~   | find references   |
+| ~R~   | rename            |
+| ~h~   | open docs         |
+| ~?~   | toggle the legend |
+
+** Leader Facet
+
+The leader facet is another idea borrowed from Vim. Basically you can execute a command by initiating a sequence of key presses. This allows you to execute commands without using modifiers. There are some differences in this implementation though:
+
+ - there is no timeout when waiting for the next key press
+ - there is visual feedback by way of legend
+
+The leader key is ~<space>~, and this is all implemented using transient facets.
+
+*General:*
+
+| *Sequence*        | *Remarks*                    |
+|-------------------+------------------------------|
+| ~<space> <space>~ | execute an aribtrary command |
+| ~<space> t~       | execute a taskfile task      |
+| ~<space> d~       | open a transient for Docker  |
+| ~<space> a~       | open a transient for LLMs    |
+
+*File:*
+
+| *Sequence*    | *Remarks*   |
+|---------------+-------------|
+| ~<space> f f~ | find a file |
+| ~<space> f s~ | save        |
+| ~<space> f S~ | save all    |
+
+*Buffer:*
+
+| *Sequence*    | *Remarks*         |
+|---------------+-------------------|
+| ~<space> b b~ | switch buffer     |
+| ~<space> b k~ | kill buffer       |
+
+*Help:*
+
+| *Sequence*    | *Remarks*         |
+|---------------+-------------------|
+| ~<space> h m~ | describe mode     |
+| ~<space> h f~ | describe function |
+| ~<space> h v~ | describe variable |
+| ~<space> h c~ | describe char     |
+| ~<space> h s~ | describe symbol   |
+| ~<space> h p~ | describe package  |
+
+*Project:*
+
+| *Sequence*    | *Remarks*            |
+|---------------+----------------------|
+| ~<space> p f~ | find file in project |
+| ~<space> p d~ | find dir in project  |
+| ~<space> p g~ | grep in project      |
+| ~<space> p D~ | dired for project    |
+| ~<space> p s~ | eshell for project   |
+| ~<space> p l~ | locate for project   |
+
+*Utils*
+
+| *Sequence*    | *Remarks*   |
+|---------------+-------------|
+| ~<space> u t~ | decode JWT  |
+| ~<space> u j~ | format JSON |
+
+*Notes:*
+
+ - I make heave use of taskfiles so there is a command to select a task and then run it with ~compile~
+ - I use Docker enough that having ~docker.el~ for a nice Docker TUI is worth it
+ - AI is integrated throughout using ~gptel~
+ - Project support is a first class citizen; the built in ~project.el~ is used for that
+ - I hate having to open a browser for things like parsing a JWT or formatting JSON so there are util functions for stuff like that
+
+** Region Facet
+
+The /region/ facet is used to control the size of the selected region of text, and then act on it. This is _very_ common flow when editing text: select something, and then do something with that selection. This makes that explicit. Regions are built using syntactic elements like words, sexps, and lines. Point and mark swapping is fully supported to allow regions to be built in both directions.
+
+| *Key*         | *Remarks*                                           |
+|---------------+-----------------------------------------------------|
+| ~i~           | delete region; activate insert facet                |
+| ~.~           | mode specific commands                              |
+| ~;~           | summarize with AI                                   |
+| ~y~           | delete region; yank                                 |
+| ~e~           | exchange point and mark                             |
+| ~w~           | forward word                                        |
+| ~W~           | backward word                                       |
+| ~s~           | forward sexp                                        |
+| ~S~           | backward sexp                                       |
+| ~l~           | forward line                                        |
+| ~L~           | backward line                                       |
+| ~g~           | forward/backward to line number (relative)          |
+| ~b~           | expand to entire buffer                             |
+| ~=~           | expand                                              |
+| ~-~           | contract                                            |
+| ~[~           | beginning of line                                   |
+| ~]~           | end of line                                         |
+| ~<backspace>~ | delete the region                                   |
+| ~c~           | clone the region                                    |
+| ~r~           | replace all instances matching region (from prompt) |
+| ~k~           | save to kill ring                                   |
+| ~K~           | kill                                                |
+| ~U~           | move region up                                      |
+| ~D~           | move region down                                    |
+| ~/~           | toggle comment region                               |
+| ~o~           | order lines in region alpha                         |
+| ~j~           | join lines in region                                |
+| ~<~           | region unindent (rigidly)                           |
+| ~>~           | region indent (rigidly)                             |
+| ~u~           | uppercase the region                                |
+| ~d~           | downcase the region                                 |
+| ~n~           | narrow to region                                    |
+| ~f~           | remove all matching lines (prompt)                  |
+| ~{~           | wrap in {}                                          |
+| ~'~           | wrap in ''                                          |
+| ~"~           | wrap in ""                                          |
+| ~`~           | wrap in ``                                          |
+| ~(~           | wrap in ()                                          |
+| ~?~           | toggle the legend                                   |
+
+*Notes:*
+
+ - The replace in buffer is not regexp; it is a direct string match
+ - While it is best to indent per indentation rules sometimes you just need to rigidly indent/unindent a thing
+ - I really like the experience of expanding the region in both direction syntactically; thus I use the excellent ~expreg~
+
+** Rectangle Region Facet
+
+The /rectangle region/ facet is used to control the size of the selected rectangle region of text, and then act on it. Rectangle regions are more narrowly useful than a normal region, but they can be useful or adding remove prefixes.
+
+| *Key*         | *Remarks*         |
+|---------------+-------------------|
+| ~<backspace>~ | delete region     |
+| ~p~           | prefix region     |
+| ~n~           | number region     |
+| ~?~           | toggle the legend |
+
+** Line Facet
+
+I commonly find myself acting upon a single line of text. The /line/ facet effectively has an implicit region of the current line which it can then act upon
+
+| *Key*         | *Remarks*         |
+|---------------+-------------------|
+| ~<backspace>~ | delete line       |
+| ~c~           | clone line        |
+| ~j~           | join line         |
+| ~U~           | move line up      |
+| ~D~           | move line down    |
+| ~-~           | undo              |
+| ~=~           | redo              |
+| ~?~           | toggle the legend |
+
+** Dired Facet
+
+The /dired/ facet is used to interact with ~dired~. I find that ~dired~ is a surprisingly pleasant file manager to work with.
+
+| *Key*     | *Remarks*                             |
+|-----------+---------------------------------------|
+| ~i~       | activate wdired mode                  |
+| ~<enter>~ | open the current file                 |
+| ~R~       | rename current file                   |
+| ~D~       | delete current file                   |
+| ~C~       | copy current file                     |
+| ~+~       | create dir                            |
+| ~n~       | create file                           |
+| ~M~       | chmod current file                    |
+| ~O~       | chown current file                    |
+| ~G~       | chgrp current file                    |
+| ~S~       | symlink current file                  |
+| ~^~       | up to parent                          |
+| ~f~       | jump to line by match                 |
+| ~g~       | refresh                               |
+| ~m~       | mark current file                     |
+| ~u~       | unmark current file                   |
+| ~U~       | unmark all                            |
+| ~%~       | mark by regex                         |
+| ~/~       | mark dirs                             |
+| ~@~       | mark symlinks                         |
+| ~*~       | mark exes                             |
+| ~s~       | mark all                              |
+| ~!~       | execute shell command                 |
+| ~?~       | toggle the legend                     |
+
+ - Left/right movement is disabled; it has no use as dired is line based
+
+** Calc Facet
+
+Emacs has possibly the richest RPN calculator embedded in it. I actually used an RPN calculator all through college so it feels quite natural to me.
+
+| *Key*         | *Remarks*                      |
+|---------------+--------------------------------|
+| ~<backspace>~ | pop the stack                  |
+| ~<return>~    | clone top of stack             |
+| ~<tab>~       | swap top two stack items       |
+| ~u~           | undo                           |
+| ~y~           | yank top of stack              |
+| ~'~           | enter a number; push to stack  |
+| ~+~           | add top two stack items        |
+| ~-~           | subtract top two stack items   |
+| ~*~           | multiply top two stack items   |
+| ~/~           | divide top two stack items     |
+| ~^~           | raise to power                 |
+| ~\~           | int divide top two stack items |
+| ~%~           | mod top two stack items        |
+| ~!~           | factorial top of stack         |
+| ~n~           | negate top of stack            |
+| ~f~           | floor top of stack             |
+| ~c~           | ceiling top of stack           |
+| ~p~           | set precision                  |
+| ~r~           | set the radix                  |
+| ~v~           | convert stack to buffer        |
+| ~?~           | toggle the legend              |
+
+*Radix:*
+
+| *Key* | *Remarks* |
+|-------+-----------|
+| ~r 2~ | binary    |
+| ~r 0~ | decimal   |
+| ~r 6~ | hex       |
+
+*Binary:*
+
+| *Key* | *Remarks*     |
+|-------+---------------|
+| ~b a~ | binary and    |
+| ~b o~ | binary or     |
+| ~x~   | binary xor    |
+| ~n~   | binary not    |
+| ~l~   | left shift    |
+| ~r~   | right shift   |
+| ~w~   | set word size |
+
+*Stats:*
+
+| *Key* | *Remarks* |
+|-------+-----------|
+| ~s a~ | mean      |
+| ~s m~ | median    |
+| ~s s~ | sum       |
+| ~s l~ | max       |
+
+** Org
+
+I make heavy use of org mode for all kinds of writing. Org has substantial structural editing capabilities built in, and over the years I have built quite a lot on top if it. The org facets are substantial, but heavily used.
+
+*General:*
+
+| *Key* | *Remarks*          |
+|-------+--------------------|
+| ~. d~ | present slide deck |
+
+*Headlines:*
+
+This is a full blown facet; it's started with ~. h~.
+
+| *Key*     | *Remarks*              |
+|-----------+------------------------|
+| ~n~       | add headline           |
+| ~d~       | delete headline        |
+| ~e~       | edit headline          |
+| ~<left>~  | demote headline        |
+| ~<right>~ | promote headline       |
+| ~<up>~    | move headline up       |
+| ~<down>~  | move headline down     |
+| ~a~       | headline priority A    |
+| ~b~       | headline priority B    |
+| ~c~       | headline priority C    |
+| ~r~       | headline priority none |
+| ~T~       | headline status TODO   |
+| ~D~       | headline status DONE   |
+| ~R~       | headline status none   |
+| ~t~       | set headline tags      |
+| ~p~       | set headline property  |
+| ~-~       | undo                   |
+| ~=~       | redo                   |
+
+*Plain Lists:*
+
+This is a full blow facet; it's started with ~. p~.
+
+| *Key*      | *Remarks*           |
+|------------+---------------------|
+| ~u~        | new unordered list  |
+| ~o~        | new ordered list    |
+| ~n~        | add list item       |
+| ~d~        | delete list item    |
+| ~e~        | edit list item text |
+| ~c~        | toggle checked      |
+| ~r~        | remove checkbox     |
+| ~<right>~  | demote list item    |
+| ~<left>~   | promote list item   |
+| ~M-<up>~   | move list item up   |
+| ~M-<down>~ | move list item down |
+| ~-~        | undo                |
+| ~=~        | redo                |
+| ~?~        | toggle legend       |
+
+*Tables:*
+
+This is a full blown facet; it's started with ~. t~.
+
+| *Key*    | *Remarks*                           |
+|----------+-------------------------------------|
+| ~n~      | prompt for dimensions; create table |
+| ~e~      | edit cell text                      |
+| ~<up>~   | previous cell                       |
+| ~<down>~ | next cell                           |
+| ~r~      | new row                             |
+| ~c~      | new column                          |
+| ~d~      | delete row                          |
+| ~D~      | delete column                       |
+| ~-~      | undo                                |
+| ~=~      | redo                                |
+| ~?~      | toggle legend                       |
+
+*Visibility:*
+
+This is a full blown facet; it's started with ~. v~.
+
+| *Key*    | *Remarks*         |
+|----------+-------------------|
+| ~<up>~   | previous headline |
+| ~<down>~ | next headline     |
+| ~H~      | hide all          |
+| ~S~      | show all          |
+| ~h~      | hide headline     |
+| ~s~      | show headline     |
+| ~o~      | enable olivetti   |
+| ~?~      | toggle legend     |
+
+
+*Links:*
+
+| *Key*   | *Remarks*     |
+|---------+---------------|
+| ~. l h~ | new HTTP link |
+| ~. l f~ | new file link |
+| ~. l i~ | new image link |
+| ~. l n~ | new note link |
+
+*Formatting:*
+
+The formatting is only available when a region is selected.
+
+| *Key* | *Remarks*            |
+|-------+----------------------|
+| ~. b~ | format bold          |
+| ~. i~ | format italic        |
+| ~. u~ | format underline     |
+| ~. s~ | format strikethrough |
+| ~. c~ | format code          |
+| ~. r~ | remove formatting    |
+
+*Blocks:*
+
+| *Key*   | *Remarks*       |
+|---------+-----------------|
+| ~. b q~ | new block quote |
+
+*Latex:*
+
+| *Key*   | *Remarks*             |
+|---------+-----------------------|
+| ~. x t~ | toggle latex at point |
+
+*HTTP Client:*
+
+| *Key*   | *Remarks*                        |
+|---------+----------------------------------|
+| ~. c r~ | send request at point            |
+| ~. c t~ | add verb tag to current headline |
+| ~. c m~ | select and insert an HTTP method |
+| ~. c f~ | select and insert a file body    |
+| ~. c u~ | insert an URL encoded form body  |
+| ~. c v~ | add a verb variable at point     |
+| ~. c v~ | set a verb variable              |
+| ~. c l~ | list verb variables              |
+| ~. c p~ | add verb prelude property        |
+| ~. c e~ | export the request at point      |
+
+*Export:*
+
+| *Key*   | *Remarks*     |
+|---------+---------------|
+| ~. e m~ | export to GFM |
+
+
+*Source:*
+
+| *Key*   | *Remarks*                     |
+|---------+-------------------------------|
+| ~. s n~ | add a new source block        |
+| ~. s e~ | edit source block at point    |
+| ~. s r~ | run the source block at point |
+
+
+*Notes:*
+
+ - I like presenting from Org, and I used ~dslide~ for that
+ - I use org as a Postman esque HTTP client with ~verb~
+ - Even if the final artifact is not org I'll often author in org, and then export
+ - I like using org as Jupyter style notebook so Babel is hooked up
+ - I use Latex to display equations
