@@ -63,12 +63,14 @@
   ;; this way it appears above the popper
 
   (defun bristle--popper-aware-transient-display-action (orig-fun &rest args)
-    "Use pop-up-window for transient when invoked from a popper buffer."
-    (if (and (bound-and-true-p popper-popup-status)
-             (memq popper-popup-status '(popup user-popup)))
-        '(display-buffer-pop-up-window
-          (inhibit-same-window . t))
-      (apply orig-fun args)))
+  "Use dedicated top slot for transient when invoked from a popper buffer."
+  (if (and (bound-and-true-p popper-popup-status)
+           (memq popper-popup-status '(popup user-popup)))
+      '(display-buffer-in-side-window
+        (side . top)
+        (dedicated t)
+        (inhibit-same-window . t))
+    (apply orig-fun args)))
   
   (advice-add 'transient--display-action :around #'bristle--popper-aware-transient-display-action))
 
