@@ -67,7 +67,7 @@
         (tasks '()))
     (dolist (line lines)
       (unless (string-match-p "^task:" line)
-        (when (string-match "^\\* \\(.+?\\):\\s-*\\(.*\\)$" line)
+        (when (string-match "^\\* \\(.+\\):\\s-*\\(.*\\)$" line)
           (let ((task-name (string-trim (match-string 1 line)))
                 (description (string-trim (match-string 2 line))))
             (push (cons task-name 

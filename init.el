@@ -49,6 +49,12 @@
 (require 'init-gestalt)
 (require 'init-bristle-mode-line)
 (require 'init-pcre2el)
+(require 'init-stadion)
+(require 'init-apheleia)
+(require 'init-eglot)
+(require 'init-tempel)
+(require 'init-dape)
+(require 'init-paredit)
 
 ;; minor modes
 
@@ -98,11 +104,6 @@
 
 ;; language/config support
 
-(require 'init-apheleia)
-(require 'init-eglot)
-(require 'init-tempel)
-(require 'init-stadion)
-(require 'init-dape)
 (require 'init-mermaid-ts-mode)
 (require 'init-go-mode)
 (require 'init-json-mode)
@@ -226,6 +227,9 @@
 
   ;; start the scratch file in text mode
   (initial-major-mode 'text-mode)
+
+  ;; don't yank text properties
+  (yank-excluded-properties t)
   
   :config
   

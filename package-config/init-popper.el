@@ -59,8 +59,7 @@
        (t t))))
 
   ;; popper and transient both try to use a dedicated bottom window
-  ;; if popper is active we switch it to a popup buffer
-  ;; this way it appears above the popper
+  ;; if popper is active we switch it to a dedicated top window
 
   (defun bristle--popper-aware-transient-display-action (orig-fun &rest args)
   "Use dedicated top slot for transient when invoked from a popper buffer."

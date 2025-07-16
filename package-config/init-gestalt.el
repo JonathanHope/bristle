@@ -228,6 +228,8 @@
             '("B" . ("pop buffer" . bristle--pop-buffer))
             '("o" . ("open char" . bristle--open-char))
             '("!" . ("save" . save-buffer))
+            '(")" . ("slurp" . paredit-forward-slurp-sexp))
+            '("(" . ("barf" . paredit-forward-barf-sexp))
             '("?" . ("legend" . bristle--legend-toggle))))
 
   (defun bristle--mark-point ()
@@ -890,7 +892,8 @@ The mark is deactivated if point and mark would be inverted."
    '("b" . ("buffer" . gestalt-buffer-transient-facet))
    '("h" . ("help" . gestalt-help-transient-facet))
    '("p" . ("project" . gestalt-project-transient-facet))
-   '("u" . ("utils" . gestalt-utils-transient-facet)))
+   '("u" . ("utils" . gestalt-utils-transient-facet))
+   '("n" . ("notes" . soma-consult-notes)))
 
   (gestalt-define-transient-facet
    file
