@@ -19,7 +19,7 @@
   (load bootstrap-file nil 'nomessage))
 
 ;; integrate straight with use-package
-(straight-use-package 'use-package)
+(straight-use-package '(use-package :type built-in))
 
 ;; Configure packages using use-package.
 (add-to-list 'load-path (concat user-emacs-directory "package-config"))
@@ -31,6 +31,7 @@
 
 ;; core
 
+(require 'init-compat)
 (require 'init-envrc)
 (require 'init-inheritenv)
 (require 'init-fontaine)
