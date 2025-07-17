@@ -12,6 +12,7 @@
   (dired-use-ls-dired t)
   (dired-listing-switches "-alh --group-directories-first")
   (dired-free-space nil)
+  (dired-keep-marker-copy nil)
 
   :config
   (defun dired-mode-setup ()

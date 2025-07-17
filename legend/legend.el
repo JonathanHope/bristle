@@ -6,7 +6,6 @@
 ;; Version: 1.0.0
 ;; Package-Requires: ((emacs "29.1"))
 ;; Keywords: help, keybindings
-;; URL: TODO
 
 ;;; Commentary:
 

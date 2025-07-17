@@ -26,7 +26,8 @@
      (wdired-mode . wdired)
      (calc-mode . calc)
      (mcp-hub-mode . mcp)
-     (smerge-mode . move)))
+     (smerge-mode . move)
+     (compilation-mode . move)))
   
   :config
   (gestalt-init)
@@ -681,7 +682,6 @@ The mark is deactivated if point and mark would be inverted."
   ;; todo facet
   ;; the todo facet is for moving around todos
 
-  ;; TODO: consult todos
   (gestalt-define-facet
    todo
    "Facet to do things with TODOs."
@@ -690,6 +690,7 @@ The mark is deactivated if point and mark would be inverted."
    :keymap (gestalt-make-command-map
             '("n" . ("next" . hl-todo-next))
             '("p" . ("previous" . hl-todo-previous))
+            '("g" . ("goto todo" . consult-hl-todo))
             '("?" . ("legend" . bristle--legend-toggle))))
 
   ;; spelling facet
@@ -732,6 +733,8 @@ The mark is deactivated if point and mark would be inverted."
             '("i" . ("wdired" . wdired-change-to-wdired-mode))
             '("<left>" . ("left" . ignore))
             '("<right>" . ("right" . ignore))
+            '("{" . ("goto buffer beg" . beginning-of-buffer))
+            '("}" . ("goto buffer end" . end-of-buffer))
             '("RET" . ("open" . bristle--dired-find-file))
             '("SPC" . ("leader" . gestalt-leader-transient-facet))
             '("+" . ("new dir" . dired-create-directory))
@@ -773,6 +776,8 @@ The mark is deactivated if point and mark would be inverted."
    :keymap (gestalt-make-command-map
             '("<left>" . ("left" . ignore))
             '("<right>" . ("right" . ignore))
+            '("{" . ("goto buffer beg" . beginning-of-buffer))
+            '("}" . ("goto buffer end" . end-of-buffer))
             '("RET" . ("open" . bristle--dired-find-file))
             '("TAB" . ("subtree" . dired-subtree-toggle))
             '("SPC" . ("leader" . gestalt-leader-transient-facet))

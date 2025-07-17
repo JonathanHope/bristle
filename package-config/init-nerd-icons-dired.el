@@ -15,6 +15,14 @@
   
   (advice-add 'dired-create-directory :after
               (lambda (&rest _args)
+                (revert-buffer)))
+  
+  (advice-add 'dired-do-copy :after
+              (lambda (&rest _args)
+                (revert-buffer)))
+
+  (advice-add 'dired-do-rename :after
+              (lambda (&rest _args)
                 (revert-buffer))))
 
 (provide 'init-nerd-icons-dired)

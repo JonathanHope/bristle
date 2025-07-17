@@ -55,6 +55,7 @@
 (require 'init-tempel)
 (require 'init-dape)
 (require 'init-paredit)
+(require 'init-consult-hl-todo)
 
 ;; minor modes
 
@@ -230,6 +231,9 @@
 
   ;; don't yank text properties
   (yank-excluded-properties t)
+
+  ;; scroll the compilation output automatically
+  (compilation-scroll-output t)
   
   :config
   

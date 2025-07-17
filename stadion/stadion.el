@@ -6,7 +6,6 @@
 ;; Keywords: taskfile, compile
 ;; Package-Requires: ((emacs "29.1"))
 ;; Version: 1.0.0
-;; Homepage: TODO
 
 ;; This file is not part of GNU Emacs.
 
