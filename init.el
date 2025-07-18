@@ -57,6 +57,7 @@
 (require 'init-dape)
 (require 'init-paredit)
 (require 'init-consult-hl-todo)
+(require 'init-engine-mode)
 
 ;; minor modes
 

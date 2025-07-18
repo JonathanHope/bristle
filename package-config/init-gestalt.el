@@ -389,6 +389,7 @@
             '("d" . ("downcase" . downcase-region))
             '("n" . ("narrow" . narrow-to-region))
             '("f" . ("flush lines" . consult-keep-lines))
+            '("SPC" . ("leader" . gestalt-leader-transient-facet))
             '("?" . ("legend" . bristle--legend-toggle))))
 
   (defun bristle--invoke-mode-region-facet ()
@@ -898,7 +899,8 @@ The mark is deactivated if point and mark would be inverted."
    '("h" . ("help" . gestalt-help-transient-facet))
    '("p" . ("project" . gestalt-project-transient-facet))
    '("u" . ("utils" . gestalt-utils-transient-facet))
-   '("n" . ("notes" . soma-consult-notes)))
+   '("n" . ("notes" . soma-consult-notes))
+   '("s" . ("search" . gestalt-search-transient-facet)))
 
   (gestalt-define-transient-facet
    file
@@ -934,6 +936,11 @@ The mark is deactivated if point and mark would be inverted."
    utils
    '("t" . ("decode jwt" . decode-jwt))
    '("j" . ("format json" . format-json)))
+
+  (gestalt-define-transient-facet
+   search
+   '("k" . ("kagi" . engine/search-kagi))
+   '("g" . ("github" . engine/search-github)))
 
   (defun format-json ()
     "Format the JSON in region or kill ring."
