@@ -1,0 +1,32 @@
+* On Sidebars
+
+I really like file tree sidebars. Pretty much every IDE has them these days, and there is a reason for that. After all it's hard to write code without files.
+
+* On Names
+
+This package will be called /pine/. After all the package is for a tree...  look you can't always be clever.
+
+* On Dired
+
+Emacs already has a file manager: dired. I don't use dired with details, and I do use icons. This means I am really most of the way there. I basically just want dired but:
+
+ - it is in a fixed size buffer on the left
+ - it always has the same buffer name
+ - it opens directories in the same window, and files in another window
+
+Really not much more.
+ 
+* On Alternatives
+
+There is already a package that does this: ~dired-sidebar~. I have found it pretty buggy in the past, and the codebase seems like a lot for what it is.
+
+* On Which Directory
+
+In terms of what directory the sidebar should open in:
+
+ - if in a project use the root of it (project.el)
+ - otherwise just use the current directory
+
+* On Window Selection
+
+The problem of where to open up files from the sidebar is kind of tricky. I landed on simply using whatever the largest window is.

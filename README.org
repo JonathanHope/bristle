@@ -1,0 +1,48 @@
+* Bristle
+
+#+begin_quote
+The term bristlecone pine covers three species of pine tree (family Pinaceae, genus Pinus, subsection Balfourianae). All three species are long-lived and highly resilient to harsh weather and bad soils.
+#+end_quote
+
+Bristle in an Emacs config. It is not built for general distribution, however there just might be something you find useful in here.
+
+* Requirements
+
+These are the requirements for bristle.
+
+** Emacs
+
+Bristle required Emacs >= 29. It make extensive use of tree-sitter, eglot, and native json.
+
+** CLI Tools
+
+Bristle requires the following CLI tools to installed, and on the path.
+
+ - ~fd~
+ - ~rg~
+ - ~git~
+ - ~docker~
+ - ~pandoc~
+ - ~duckdb~
+ - ~npx (node)~
+ - ~ulv (ul)~
+
+** Languages
+
+Bristle supports the following languages:
+
+ - *Go*
+ - *TypeScript*
+
+Consequently the ~go~ and ~nodejs~ toolchains need to be installed.
+ 
+** One Time Setup
+
+There is some one time setup that needs to be done:
+
+ - ~jinx~ requires the ~enchant~ headers; on NixOS you will need to start Emacs like this: ~nix-shell -p enchant pkg-config  --run 'emacs'~
+ - A number of tree sitter grammars will need to be installed; these can be installed with ~treesit-install-all~
+ - An API key for Claude is required: ~secret-tool store --label='claude' claude password~
+ - The Copilot language server needs to be installed: ~copilot-install-server~
+ - Copilot must also be logged into: ~copilot-login~
+ - The language docs must be installed: ~devdocs-install-all~

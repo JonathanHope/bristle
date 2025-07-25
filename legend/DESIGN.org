@@ -1,0 +1,60 @@
+* On Discoverability
+
+One of the things I like most about Emacs is how discoverable it is. You can check the docs for every function, variable, mode, etc within Emacs itself. Within Gestalt we will be changing keymaps often, and I would like to build discoverability for this as well. To that end I would like a ~which-key~ like display of the keybindings.
+
+I tried to use ~which-key~ for this, but I found that it was doing more than just displaying keybindings. It kept causing havoc with Gestalt and Emacs itself.
+
+* On Names
+
+This package will be called /legend/:
+
+#+begin_quote
+A map legend is a description, explanation, or table of symbols printed on a map or chart to permit a better understanding or interpretation of it. 
+#+end_quote
+
+* On Window Management
+
+On the window side this is pretty simple:
+
+ - The legend will always be displayed on the bottom
+ - The legend can shown, dismissed, and toggled
+ - The legend will always use the same buffer called ~*Legend*~
+ - The legend window will always be the height of the buffer
+
+* On Layout
+
+The keys will be displayed in a tight columnar layout in the form of {key}{separator}{command} sorted by command ascending. This is how ~which-key~ does it for the bottom display as well.
+
+The hard part is figuring out how many columns should be shown. We want to show the most columns possible to make the most efficient use of space. To that end we will first estimate the layout:
+
+ - Get the average length of the rendered bindings
+ - Divide the available width by the average length of the rendered bindings
+
+The thought process here is that the optimal number of columns will likely be very close to that estimated layout.
+
+Once we have an estimated layout we start a recursive process to find the optimal layout. At its core it will:
+
+ - Check if the target number of columns fit
+   - If they fit recurse with number of columns plus one
+   - If they don't fit recurse with number of columns less one
+
+Then we just need a couple of ternary conditions:
+
+ - If the last iteration fit, and the current done doesn't then we are optimal
+ - If the current iteration fits, and the number of columns equals the number of bindings we are optimal
+
+I expect that most cases will not take many iterations to find the optimal layout.
+
+* On Caching
+
+Even though the layout algorithm should be fast enough for the input data size we will add a layer of caching to increase performance. The rendered output will be cached by width and keymap. This cache should have a maximum number of values that are evicted with an LRU strategy.
+
+* Other Features
+
+There are some other features we'll want as well:
+
+ - Don't do anything if the keymap/width haven't changed, or if the window is not visible
+ - Support for truncating the description
+ - The key/description separator is configurable
+ - The column separator is configurable
+ - Configurable faces

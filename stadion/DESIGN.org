@@ -1,0 +1,23 @@
+* On Abstractions
+
+Abstractions are important. If you are writing code and you have functionality that is used over and over again you would extract that to a function. Tools like ~make~ and ~task~ bring that to CLI invocations. Instead of a byzantine CLI invocation to run the test suite you just ~task test~.
+
+Of the tools in this space I like ~task~ for its simplicity. I would like a nice way to run ~task~ in Emacs.
+
+* On Names
+
+This package will be called /stadion/:
+
+#+begin_quote
+Stadion or stade (Ancient Greek: στάδιον) was an ancient running event and also the facility in which it took place, as part of Panhellenic Games including the Ancient Olympic Games.
+#+end_quote
+
+* On Compile
+
+Emacs already has a solution for running things like ~task~: ~compile~. It prompts you for the command you want to run, and then pipes the output into a compilation buffer. To most elegantly fit into Emacs we should:
+
+ 1) get the available tasks
+ 2) allow the user to select a task with ~completing-read~
+ 3) run the task using ~compile~
+
+This will also work very nicely with ~popper~.

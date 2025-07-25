@@ -1,0 +1,93 @@
+* On Modal Editing
+
+When people think modal editing they think Vi. Vi is famously hostile to casual users as when you open it you can't insert text, and the technique to save and/or exit is unintuitive. This is because Vi has a mode to insert text (insert), and a mode to other things (command) which it starts in.
+
+However I think the core definition of modal editing is that _different key do different things at different times_. By that definition pretty much every text editor is modal. It's just a matter of the degree.
+
+I would like to have something closer to the degree of Vi in Emacs, but there are problems with the existing options such as Evil and Meow:
+
+ - *prescriptive:* they prescribe a particular way of working; I want to define my own
+ - *intrusive:* modes tend to permeate all parts of Emacs; even places they cause issues
+
+Consequently I will write a package to define my own modal editing framework.
+ 
+* On Names
+
+This package will be called /gestalt/:
+
+#+begin_quote
+a configuration or pattern of elements so unified as a whole that it cannot be described merely as a sum of its parts
+#+end_quote
+
+The word mode in Emacs is already over subscribed. We need a name for the parts that the gestalt is composed of: /facet/.
+
+* On Emacs Keymaps
+
+In Emacs a keymap is how we define behavior for one or more keys, and really a facet is just a keymap. It's just a matter of which keymap is active.
+
+We are going to have two flavors or keymap that map to the Vi modes:
+
+ - *insert:* an insert keymap changes nothing unless a user adds a binding
+ - *command:* a command keymap removes the behavior for all non-modifier keys
+   - Specifically the keys between ~!~ and ~~~ (+ space) on an ASCII map
+   - User can of course add their own bindings for those keys
+   - The modifiers still work so the standard Emacs key chords still work
+
+If a user wants a facet that behaves like the Vi command mode they would use a /command keymap/, and if the user wants a facet that behaves like the Vi insert mode they would use an /insert keymap/.
+
+* Modal Editing in Emacs
+
+Emacs is not a modal editor, and if you try to apply Vi style editing everywhere things will break. Thus there should be a /default/ facet that does nothing. That way by default nothing is broken, and any breakage is something the user opts into when defining their own facets. This leads to a number of rules:
+
+ - No facet is ever active in fundamental mode
+ - There can only ever be one active facet
+ - A facet is active per buffer, not globally
+ - There is always a default facet available
+ - The default facet does nothing
+ - All facets other than the default facet are user defined
+ - A facet can be either a /command facet/, or an /insert facet/ 
+ - The facet always changes when the major mode changes
+   - Unless the user specifies otherwise the facet will always change to default
+ - The user can change the active facet at any time
+ - A facets keymap must always be the highest priority
+ 
+* On Emacs Minor Modes
+
+Following the rules above we know that we need some way to to enable and disable a high precedence keymap per buffer. This is _exactly_ what minor modes do. Which is to say that a facet is really just a minor mode. All we have to do is add a little plumbing around them:
+
+ - A way to generate a minor modes
+ - A way to change minor modes
+ - A way to track with minor is active in a given buffer
+ - A way to automatically change the minor mode on major mode change
+   
+* On Emacs Transient Keymaps
+
+In Vi there is the idea of a leader key. It's basically a namespace of commands. For instance say you want a command that deletes a line. You could add it under the leader key ~l~, thus the sequence to delete a line could be ~l~ ~d~. I want to implement this behavior in Emacs as well.
+
+Emacs has a way to set a keymap as /transient/ in that it has high priority for one keypress, and then goes away. This is exactly how leader keys work so we will use ~set-transient-map~.
+
+All we would need for this is:
+
+ - A way to generate a command keymap
+ - A way to call ~set-transient-map~ on that keymap
+
+These facets will be called /transient facets/.
+ 
+There is one last problem to solve which is the problem that things like ~hydra~ and ~transient~ solve: a facet that overrides absolutely everything, and sticks around until dismissed. This is useful for things like system level facets that control windows, or facets for TUI modes that will conflict with other bindings.
+
+We can actually implement these with ~set-transient-map~ as well. It starts off the same as a transient facet with a call to ~set-transient-map~. However we'll also add a ~post-command-hook~ that calls ~set-transient-map~ again. That way the command gets to execute without interference, while the override keymap is maintained. If the quit key is hit the hook is removed which breaks this loop. One wrinkle is that we'll have to add avoid setting the transient map while the minibuffer is active. This approach has many advantages:
+
+ - Don't have to deal with ~internal-push-keymap~/~internal-pop-keymap~
+ - Don't have to advise anything
+ - Interactive commands that collect input from minibuffer just work.
+
+These facets will be called /override facets/. There can only ever be one override facet mode active at a time.
+
+* Other Goals
+
+There are a few more miscellaneous goals:
+
+ - Identifier for facets to show in mode line.
+ - A way to know when the keymap has change, and what the current keymap is.
+ - A way to know if a transient facets was activated/deactivated.
+ - A way to know if an override facet was activated/deactivated.
