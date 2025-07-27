@@ -140,6 +140,7 @@
 (require 'init-gptel-quick) ;; summary
 (require 'init-copilot) ;; completion (with FIM)
 (require 'init-mcp) ;; mcp server management
+(require 'init-emacs-mcp) ;; MCP server for Emacs itself
 
 ;; buffer management
 

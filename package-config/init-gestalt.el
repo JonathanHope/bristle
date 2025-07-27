@@ -576,7 +576,7 @@ The mark is deactivated if point and mark would be inverted."
         ;; finally remove all of the overlays
         ;; the cleanup will happen even if the user cancels
         (unwind-protect
-            (let ((replacement (read-string "Replace with: ")))
+            (let ((replacement (read-string "Replace with: " target)))
               (save-excursion
                 (goto-char (point-min))
                 (while (search-forward target nil t)
@@ -948,7 +948,8 @@ The mark is deactivated if point and mark would be inverted."
    '("u" . ("utils" . gestalt-utils-transient-facet))
    '("n" . ("notes" . soma-consult-notes))
    '("s" . ("search" . gestalt-search-transient-facet))
-   '("c" . ("dev containers" . gestalt-devcontainer-transient-facet)))
+   '("c" . ("dev containers" . gestalt-devcontainer-transient-facet))
+   '("i" . ("interfaces" . gestalt-interface-transient-facet)))
 
   (gestalt-define-transient-facet
    file
@@ -980,7 +981,8 @@ The mark is deactivated if point and mark would be inverted."
    '("D" . ("dired" . project-dired))
    '("e" . ("eshell" . project-eshell))
    '("g" . ("grep" . consult-ripgrep))
-   '("l" . ("locate" . consult-fd)))
+   '("l" . ("locate" . consult-fd))
+   '("s" . ("switch" . project-switch-project)))
 
   (gestalt-define-transient-facet
    utils
@@ -997,6 +999,16 @@ The mark is deactivated if point and mark would be inverted."
    '("s" . ("start" . devcontainer-start))
    '("k" . ("kill" . devcontainer-stop))
    '("b" . ("rebuild" . devcontainer-rebuild)))
+
+  (gestalt-define-transient-facet
+   interface
+   '("c" . ("calc" . full-calc))
+   '("m" . ("magit" . magit))
+   '("r" . ("regex builder" . re-builder))
+   '("i" . ("ibuffer" . ibuffer))
+   '("e" . ("ediff" . ediff-buffers))
+   '("g" . ("gptel" . gptel))
+   '("d" . ("dired" . dired)))
 
   (defun format-json ()
     "Format the JSON in region or kill ring."
@@ -1408,7 +1420,7 @@ The mark is deactivated if point and mark would be inverted."
 
   (gestalt-define-transient-facet
    orgc
-   '("r" . ("send" . verb-send-request-on-point))
+   '("r" . ("send" . verb-send-request-on-point-other-window))
    '("t" . ("tag" . bristle--add-verb-tag))
    '("m" . ("method" . bristle--insert-http-method))
    '("f" . ("file" . bristle--select-file))

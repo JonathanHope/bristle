@@ -8,3 +8,5 @@ ltximg/
 tree-sitter/
 .cache/
 devdocs/
+node_modules/
+.direnv
