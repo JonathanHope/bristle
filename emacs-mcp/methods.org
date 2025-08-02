@@ -1,0 +1,383 @@
+* Initialize                                                          :verb:
+
+# Client/server handshake to inform each other of their capabilities.
+
+post http://localhost:8080
+Accept: application/json
+Content-Type: application/json; charset=utf-8
+
+#+BEGIN_SRC json
+{
+  "jsonrpc": "2.0",
+  "id": 1,
+  "method": "initialize",
+  "params": {
+    "protocolVersion": "2025-06-18",
+    "capabilities": {},
+    "clientInfo": {
+      "name": "test-client",
+      "version": "1.0.0"
+    }
+  }
+}
+#+END_SRC
+
+* Initialized                                                         :verb:
+
+# Inform the server the client is initialized.
+
+post http://localhost:8080
+Accept: application/json
+Content-Type: application/json; charset=utf-8
+
+#+BEGIN_SRC json
+{
+  "jsonrpc": "2.0",
+  "method": "notifications/initialized"
+}
+#+END_SRC
+
+* Ping                                                                :verb:
+
+# Allows the client the check if the server is still there.
+
+post http://localhost:8080
+Accept: application/json
+Content-Type: application/json; charset=utf-8
+
+#+BEGIN_SRC json
+{
+  "jsonrpc": "2.0",
+  "id": 1,
+  "method": "ping"
+}
+#+END_SRC
+
+* List Tools                                                          :verb:
+
+# This is the method that lists the tools that the MCP provides.
+
+post http://localhost:8080
+Accept: application/json
+Content-Type: application/json; charset=utf-8
+
+#+BEGIN_SRC json
+{
+  "jsonrpc": "2.0",
+  "id": 1,
+  "method": "tools/list"
+}
+#+END_SRC
+
+* Get Project Root                                                    :verb:
+
+# Get the root of the current project.
+
+post http://localhost:8080
+Accept: application/json
+Content-Type: application/json; charset=utf-8
+
+#+BEGIN_SRC json
+{
+  "jsonrpc": "2.0",
+  "id": 1,
+  "method": "tools/call",
+  "params": {
+    "name": "get-project-root",
+    "arguments": {}
+  }
+}
+#+END_SRC
+
+* List Project Files                                                  :verb:
+
+# List the files in the current project. Also has wildcard support.
+
+post http://localhost:8080
+Accept: application/json
+Content-Type: application/json; charset=utf-8
+
+#+BEGIN_SRC json
+{
+  "jsonrpc": "2.0",
+  "id": 1,
+  "method": "tools/call",
+  "params": {
+    "name": "list-project-files",
+    "arguments": {
+      "pattern": "*docker*"
+    }
+  }
+}
+#+END_SRC
+
+* List Project Directories                                            :verb:
+
+# List the directories in the current project.
+
+post http://localhost:8080
+Accept: application/json
+Content-Type: application/json; charset=utf-8
+
+#+BEGIN_SRC json
+{
+  "jsonrpc": "2.0",
+  "id": 1,
+  "method": "tools/call",
+  "params": {
+    "name": "list-project-directories",
+    "arguments": {}
+  }
+}
+#+END_SRC
+
+* Grep in Project                                                     :verb:
+
+# Grep in the current project. Can optionally be limited by filename.
+
+post http://localhost:8080
+Accept: application/json
+Content-Type: application/json; charset=utf-8
+
+#+BEGIN_SRC json
+{
+  "jsonrpc": "2.0",
+  "id": 1,
+  "method": "tools/call",
+  "params": {
+    "name": "grep-project",
+    "arguments": {
+      "pattern": "TODO",
+      "files": [],
+      "case_sensitive": "false"
+    }
+  }
+}
+#+END_SRC
+
+* Regex Replace in Project                                            :verb:
+
+# Regex replace in the current project.
+
+post http://localhost:8080
+Accept: application/json
+Content-Type: application/json; charset=utf-8
+
+#+BEGIN_SRC json
+{
+  "jsonrpc": "2.0",
+  "id": 1,
+  "method": "tools/call",
+  "params": {
+    "name": "regex-replace-project",
+    "arguments": {
+      "pattern": "TODO",
+      "replacement": "FIXME",
+      "files": [],
+      "case_sensitive": "false"
+    }
+  }
+}
+#+END_SRC
+
+* File Info                                                           :verb:
+
+# Get metadata for a file.
+
+post http://localhost:8080
+Accept: application/json
+Content-Type: application/json; charset=utf-8
+
+#+BEGIN_SRC json
+{
+  "jsonrpc": "2.0",
+  "id": 1,
+  "method": "tools/call",
+  "params": {
+    "name": "get-file-info",
+    "arguments": {
+      "path": "/home/jhope/Projects/armaria/LICENSE"
+    }
+  }
+}
+#+END_SRC
+
+* Read File                                                           :verb:
+
+# Read the contents of a file. Can read part of the file by line numbers.
+
+post http://localhost:8080
+Accept: application/json
+Content-Type: application/json; charset=utf-8
+
+#+BEGIN_SRC json
+{
+  "jsonrpc": "2.0",
+  "id": 1,
+  "method": "tools/call",
+  "params": {
+    "name": "read-file",
+    "arguments": {
+      "path": "/home/jhope/Projects/armaria/LICENSE",
+      "start_line": 1,
+      "end_line": 3
+    }
+  }
+}
+#+END_SRC
+
+* Write File                                                          :verb:
+
+# Write to a file.
+
+post http://localhost:8080
+Accept: application/json
+Content-Type: application/json; charset=utf-8
+
+#+BEGIN_SRC json
+{
+  "jsonrpc": "2.0",
+  "id": 1,
+  "method": "tools/call",
+  "params": {
+    "name": "write-file",
+    "arguments": {
+      "path": "/home/jhope/mcp-test",
+      "content": "789"
+    }
+  }
+}
+#+END_SRC
+
+* Create Directory                                                    :verb:
+
+# Create a directory.
+
+post http://localhost:8080
+Accept: application/json
+Content-Type: application/json; charset=utf-8
+
+#+BEGIN_SRC json
+{
+  "jsonrpc": "2.0",
+  "id": 1,
+  "method": "tools/call",
+  "params": {
+    "name": "create-directory",
+    "arguments": {
+      "path": "/home/jhope/mcp-test-2"
+    }
+  }
+}
+#+END_SRC
+
+* Delete File                                                         :verb:
+
+# Delete a file.
+
+post http://localhost:8080
+Accept: application/json
+Content-Type: application/json; charset=utf-8
+
+#+BEGIN_SRC json
+{
+  "jsonrpc": "2.0",
+  "id": 1,
+  "method": "tools/call",
+  "params": {
+    "name": "delete-file",
+    "arguments": {
+      "path": "/home/jhope/mcp-test"
+    }
+  }
+}
+#+END_SRC
+
+* Delete Directory                                                    :verb:
+
+# Delete a directory.
+
+post http://localhost:8080
+Accept: application/json
+Content-Type: application/json; charset=utf-8
+
+#+BEGIN_SRC json
+{
+  "jsonrpc": "2.0",
+  "id": 1,
+  "method": "tools/call",
+  "params": {
+    "name": "delete-directory",
+    "arguments": {
+      "path": "/home/jhope/mcp-test-2"
+    }
+  }
+}
+#+END_SRC
+
+* Fetch Web Page                                                      :verb:
+
+# Fetch a web page as plain text.
+
+post http://localhost:8080
+Accept: application/json
+Content-Type: application/json; charset=utf-8
+
+#+BEGIN_SRC json
+{
+  "jsonrpc": "2.0",
+  "id": 1,
+  "method": "tools/call",
+  "params": {
+    "name": "fetch-webpage",
+    "arguments": {
+      "url": "https://en.wikipedia.org/wiki/Bristlecone_pine"
+    }
+  }
+}
+#+END_SRC
+
+* Execute Shell Command                                               :verb:
+
+# Fetch a web page as plain text.
+
+post http://localhost:8080
+Accept: application/json
+Content-Type: application/json; charset=utf-8
+
+#+BEGIN_SRC json
+{
+  "jsonrpc": "2.0",
+  "id": 1,
+  "method": "tools/call",
+  "params": {
+    "name": "run-shell-command",
+    "arguments": {
+      "command": "uname -a"
+    }
+  }
+}
+#+END_SRC
+
+* Evaluate Emacs Lisp Code                                            :verb:
+
+# Evaluate arbitrary Emacs List code.
+
+post http://localhost:8080
+Accept: application/json
+Content-Type: application/json; charset=utf-8
+
+#+BEGIN_SRC json
+{
+  "jsonrpc": "2.0",
+  "id": 1,
+  "method": "tools/call",
+  "params": {
+    "name": "eval-elisp",
+    "arguments": {
+      "code": "(message \"Hello World\")"
+    }
+  }
+}
+#+END_SRC
+

@@ -1,0 +1,14 @@
+{
+  "scripts": {
+    "dev": "fastmcp dev server.ts"
+  },
+  "dependencies": {
+    "fastmcp": "^3.11.0",
+    "zod": "^3.25.76"
+  },
+  "devDependencies": {
+    "@types/node": "^24.1.0",
+    "prettier": "^3.6.2",
+    "tsx": "^4.20.3"
+  }
+}
