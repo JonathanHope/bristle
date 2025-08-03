@@ -946,7 +946,7 @@ The mark is deactivated if point and mark would be inverted."
    :keymap (gestalt-make-command-map
             '("SPC" . ("leader" . gestalt-leader-transient-facet))
             '("g" . ("refresh" . notmuch-refresh-this-buffer))
-            '("f" . ("fetch" . bristle--notmuch-fetch-mail))
+            '("f" . ("fetch" . notmuch-poll))
             '("i" . ("inbox" . bristle--notmuch-inbox))
             '("u" . ("unread" . bristle--notmuch-unread))
             '("a" . ("archived" . bristle--notmuch-archived))

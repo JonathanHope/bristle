@@ -8,12 +8,17 @@
   (add-hook 'notmuch-tree-mode-hook 'notmuch-tree-outline-mode)
   
   :custom
-  ;; TODO: think this through more
-  (notmuch-fcc-dirs (format-time-string "/home/jhope/Maildir/jhope/Sent/cur/%Y-%m-%d_%T"))
-  (notmuch-maildir-use-notmuch-insert nil)
+  ;; don't save a copy of sent emails
+  (notmuch-fcc-dirs nil)
+
+  ;; locate the GPG key based on sender
+  (mml-secure-openpgp-sign-with-sender t)
+  
+  ;; use msmtp to send mail
   (send-mail-function 'sendmail-send-it)
   (sendmail-program "msmtp")
-  (mail-specificy-envelope-from t)
+
+  ;; use the header for from with msmtp
   (message-sendmail-envelope-from 'header)
   (mail-envelope-from 'header)
   
