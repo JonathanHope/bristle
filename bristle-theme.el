@@ -274,15 +274,25 @@
 
  
  ;; notmuch
+ '(notmuch-tree-match-tag-face ((t (:foreground "#ebcb8b"))))
  '(notmuch-tag-face ((t (:foreground "#ebcb8b"))))
  '(notmuch-tag-unread ((t (:foreground "#bf616a"))))
- '(notmuch-search-unread-face ((t (:foreground "#bf616a"))))
+ '(notmuch-search-date ((t (:foreground "#a3be8c"))))
+ '(notmuch-tree-match-date-face ((t (:foreground "#a3be8c"))))
+ '(notmuch-search-matching-authors ((t (:foreground "#b48ead"))))
+ '(notmuch-tree-match-author-face ((t (:foreground "#b48ead"))))
+ '(notmuch-tree-match-tree-face ((t (:foreground "#d08770"))))
+ '(notmuch-message-summary-face ((t (:weight bold))))
  '(message-header-name ((t (:foreground "#a3be8c"))))
  '(message-header-subject ((t (:foreground "#eff1f5"))))
  '(message-header-to ((t (:foreground "#eff1f5"))))
  '(message-header-other ((t (:foreground "#eff1f5"))))
  '(message-mml ((t (:foreground "#8fa1b3"))))
  '(message-header-cc ((t (:foreground "#eff1f5"))))
+ '(message-cited-text-1 ((t (:foreground "#65737e" :slant italic))))
+ '(message-cited-text-2 ((t (:foreground "#65737e" :slant italic))))
+ '(message-cited-text-3 ((t (:foreground "#65737e" :slant italic))))
+ '(message-cited-text-4 ((t (:foreground "#65737e" :slant italic))))
 
  ;; terraform
  '(terraform--resource-type-face ((t (:foreground "#c0c5ce"))))

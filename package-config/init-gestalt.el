@@ -30,7 +30,11 @@
      (compilation-mode . move)
      (ibuffer-mode . ibuffer)
      (woman-mode . move)
-     (devdocs-mode . move)))
+     (devdocs-mode . move)
+     (notmuch-hello-mode . notmuch-hello)
+     (notmuch-search-mode . notmuch-search)
+     (notmuch-tree-mode . notmuch-tree)
+     (notmuch-show-mode . notmuch-show)))
   
   :config
   (gestalt-init)
@@ -66,6 +70,7 @@
          ((eq major-mode 'typescript-ts-mode) 'gestalt-js-transient-facet)
          ((eq major-mode 'tsx-ts-mode) 'gestalt-js-transient-facet)
          ((eq major-mode 'js-ts-mode) 'gestalt-js-transient-facet)
+         ((eq major-mode 'notmuch-message-mode) 'gestalt-notmuch-message-transient-facet)
          ((bound-and-true-p smerge-mode) 'gestalt-smerge-facet-activate)
          (t nil))))
 
@@ -180,7 +185,8 @@
                        ("regex builder" . re-builder)
                        ("ibuffer" . ibuffer)
                        ("ediff" . (lambda () (call-interactively 'ediff-buffers)))
-                       ("llm chat" . (lambda () (call-interactively 'gptel)))))
+                       ("llm chat" . (lambda () (call-interactively 'gptel)))
+                       ("notmuch" . notmuch)))
            (choice (completing-read "App:" (mapcar #'car commands)))
            (command (cdr (assoc choice commands))))
       (when command
@@ -929,6 +935,122 @@ The mark is deactivated if point and mark would be inverted."
   (gestalt-define-transient-facet
    js
    '("j" . ("jsdoc" . jsdoc)))
+
+  ;; notmuch
+  ;; this facet is for email with notmuch
+
+  (gestalt-define-facet
+   notmuch-hello
+   "Facet to work with notmuch in hello mode."
+   :lighter " [NMH]"
+   :keymap (gestalt-make-command-map
+            '("SPC" . ("leader" . gestalt-leader-transient-facet))
+            '("g" . ("refresh" . notmuch-refresh-this-buffer))
+            '("f" . ("fetch" . bristle--notmuch-fetch-mail))
+            '("i" . ("inbox" . bristle--notmuch-inbox))
+            '("u" . ("unread" . bristle--notmuch-unread))
+            '("a" . ("archived" . bristle--notmuch-archived))
+            '("d" . ("deleted" . bristle--notmuch-deleted))
+            '("s" . ("search" . notmuch-tree))
+            '("m" . ("send message" . notmuch-mua-new-mail))
+            '("?" . ("legend" . bristle--legend-toggle))))
+
+  (gestalt-define-facet
+   notmuch-search
+   "Facet to work with notmuch in search mode."
+   :lighter " [NMSE]"
+   :keymap (gestalt-make-command-map
+            '("SPC" . ("leader" . gestalt-leader-transient-facet))
+            '("f" . ("find in line" . consult-line))
+            '("q" . ("quit" . notmuch-bury-or-kill-this-buffer))
+            '("g" . ("refresh" . notmuch-refresh-this-buffer))
+            '("{" . ("goto buffer beg" . beginning-of-buffer))
+            '("}" . ("goto buffer end" . end-of-buffer))
+            '("?" . ("legend" . bristle--legend-toggle))))
+
+  (gestalt-define-facet
+   notmuch-tree
+   "Facet to work with notmuch in tree mode."
+   :lighter " [NMT]"
+   :keymap (gestalt-make-command-map
+            '("SPC" . ("leader" . gestalt-leader-transient-facet))
+            '("f" . ("find in line" . consult-line))
+            '("q" . ("quit" . notmuch-bury-or-kill-this-buffer))
+            '("g" . ("refresh" . notmuch-refresh-this-buffer))
+            '("{" . ("goto buffer beg" . beginning-of-buffer))
+            '("}" . ("goto buffer end" . end-of-buffer))
+            '("?" . ("legend" . bristle--legend-toggle))))
+
+  (gestalt-define-facet
+   notmuch-show
+   "Facet to work with notmuch in show mode."
+   :lighter " [NMSH]"
+   :keymap (gestalt-make-command-map
+            '("SPC" . ("leader" . gestalt-leader-transient-facet))
+            '("f" . ("find in line" . consult-line))
+            '("q" . ("quit" . notmuch-bury-or-kill-this-buffer))
+            '("g" . ("refresh" . notmuch-refresh-this-buffer))
+            '("*" . ("set tags" .  notmuch-show-tag))
+            '("a" . ("archive" .  birstle--notmuch-archive))
+            '("d" . ("delete" .  bristle--notmuch-delete))
+            '("r" . ("reply" .  notmuch-show-reply))
+            '("R" . ("reply all" .  notmuch-show-reply))
+            '("?" . ("legend" . notmuch-show-reply-all))))
+
+  (gestalt-define-transient-facet
+   notmuch-message
+   '("s" . ("send" . bristle--notmuch-send-messsage))
+   '("c" . ("cancel" . bristle--notmuch-cancel-messsage))
+   '("g" . ("sign" . mml-secure-sign-pgpmime)))
+  
+  (defun bristle--notmuch-fetch-mail ()
+    "Fetch any new mail using `mbsync' + `notmuch'."
+    (interactive)
+    (shell-command "mbsync -a")
+    (shell-command "notmuch new")
+    (notmuch-refresh-this-buffer))
+
+  (defun bristle--notmuch-inbox ()
+    "Search for `inbox' messages."
+    (interactive)
+    (notmuch-tree "tag:inbox"))
+  
+  (defun bristle--notmuch-unread ()
+    "Search for `unread' messages."
+    (interactive)
+    (notmuch-tree "tag:unread"))
+
+  (defun bristle--notmuch-deleted ()
+    "Search for `deleted' messages."
+    (interactive)
+    (notmuch-tree "tag:deleted"))
+
+  (defun bristle--notmuch-archived ()
+    "Search for `archived' messages."
+    (interactive)
+    (notmuch-tree "tag:archived"))
+
+  (defun birstle--notmuch-archive ()
+    "Archive the current message."
+    (interactive)
+    (notmuch-show-tag (list "-inbox" "-deleted" "+archived")))
+
+  (defun bristle--notmuch-delete ()
+    "Delete the current message."
+    (interactive)
+    (notmuch-show-tag (list "-inbox" "-archived" "+deleted")))
+
+  (defun bristle--notmuch-send-messsage ()
+    "Send the current message."
+    (interactive)
+    (message-send)
+    (kill-buffer (current-buffer)))
+
+  (defun bristle--notmuch-cancel-messsage ()
+    "Send the current message."
+    (interactive)
+    (set-buffer-modified-p nil)
+    (kill-buffer))
   
   ;; leader facet
   ;; this facet is how extended commands are executed
@@ -1008,7 +1130,8 @@ The mark is deactivated if point and mark would be inverted."
    '("i" . ("ibuffer" . ibuffer))
    '("e" . ("ediff" . ediff-buffers))
    '("g" . ("gptel" . gptel))
-   '("d" . ("dired" . dired)))
+   '("d" . ("dired" . dired))
+   '("n" . ("notmuch" . notmuch)))
 
   (defun format-json ()
     "Format the JSON in region or kill ring."

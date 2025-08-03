@@ -114,6 +114,14 @@
 
 (require 'init-devdocs)
 
+;; buffer management
+
+(require 'init-ibuffer)
+
+;; email
+
+(require 'init-notmuch)
+
 ;; language/config support
 
 (require 'init-mermaid-ts-mode)
@@ -141,10 +149,6 @@
 (require 'init-copilot) ;; completion (with FIM)
 (require 'init-mcp) ;; mcp server management
 (require 'init-emacs-mcp) ;; MCP server for Emacs itself
-
-;; buffer management
-
-(require 'init-ibuffer)
 
 ;; configure Emacs
 
