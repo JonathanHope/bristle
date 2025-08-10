@@ -141,6 +141,7 @@
 (require 'init-terraform-mode)
 (require 'init-xml-mode)
 (require 'init-markdown-mode)
+(require 'init-protobuf-mode)
 
 ;; llm
 

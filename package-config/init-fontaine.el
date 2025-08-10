@@ -23,7 +23,7 @@
 
      (present
       :inherit default
-      :default-height 120)))
+      :default-height 130)))
 
   :config
   (fontaine-set-preset 'default)
