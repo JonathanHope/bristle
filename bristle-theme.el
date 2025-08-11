@@ -378,6 +378,12 @@
  '(ediff-fine-diff-A       ((t (:foreground "#bf616a" :weight bold :underline t))))
  '(ediff-fine-diff-B       ((t (:foreground "#a3be8c" :weight bold :underline t))))
 
+ ;; dashboard
+ '(dashboard-items-face ((t (:foreground "#eff1f5"))))
+ '(dashboard-heading ((t (:foreground "#b48ead" :weight bold))))
+ '(dashboard-text-banner ((t (:foreground "#a3be8c" :weight bold))))
+ '(dashboard-banner-logo-title ((t (:foreground "#a3be8c" :weight bold))))
+ 
  ;; shr
  '(shr-text    ((t)))
  

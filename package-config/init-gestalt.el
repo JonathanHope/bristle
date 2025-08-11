@@ -226,6 +226,7 @@
             '("m" . ("mark point" . bristle--mark-point))
             '("r" . ("mark rectangle" . rectangle-mark-mode))
             '("p" . ("point" . gestalt-point-transient-facet))
+            '("b" . ("bookmark" . gestalt-bookmark-transient-facet))
             '("/" . ("lsp" . gestalt-lsp-transient-facet))
             '("." . ("mode specific" . bristle--invoke-mode-facet))
             '("SPC" . ("leader" . gestalt-leader-transient-facet))
@@ -239,7 +240,7 @@
             '("S" . ("sexp prev" . backward-sexp))
             '("f" . ("find in line" . consult-line))
             '("g" . ("goto line #" . consult-goto-line))
-            '("d" . ("goto def" . bristke--consult-definition))
+            '("d" . ("goto def" . bristle--consult-definition))
             '("j" . ("goto x" . avy-goto-char-timer))
             '("[" . ("goto line beg" . beginning-of-line))
             '("]" . ("goto line end" . end-of-line))
@@ -268,18 +269,18 @@
     (interactive)
     (insert " "))
 
-(defun bristke--consult-definition ()
-  "Navigate to a definition."
-  (interactive)
-  (if (eq major-mode 'org-mode)
-      (consult-org-heading)
-    (consult-imenu)))
-
-(defun bristle--invoke-mode-facet ()
-  "Invoke the current mode specific facet (if any)."
-  (interactive)
-  (when bristle--mode-facet
-    (funcall bristle--mode-facet)))
+  (defun bristle--consult-definition ()
+    "Navigate to a definition."
+    (interactive)
+    (if (eq major-mode 'org-mode)
+        (consult-org-heading)
+      (consult-imenu)))
+  
+  (defun bristle--invoke-mode-facet ()
+    "Invoke the current mode specific facet (if any)."
+    (interactive)
+    (when bristle--mode-facet
+      (funcall bristle--mode-facet)))
 
   ;; insert facet
   ;; this facet is effectively the default Emacs behavior
@@ -328,7 +329,7 @@
    point
    '("a" . ("add" . bristle--push-register))
    '("j" . ("jump" . consult-register))
-   '("c" . ("mod" . bristle--clear-register)))
+   '("c" . ("clear" . bristle--clear-register)))
 
   (defvar bristle--register-char ?Z
     "The current register character for `bristle--push-register'.")
@@ -354,6 +355,15 @@
     (setq bristle--used-registers nil)
     (setq bristle--register-char ?Z)
     (message "Points cleared"))
+
+  ;; bookmark facet
+  ;; this facet is for working with bookmarks
+
+  (gestalt-define-transient-facet
+   bookmark
+   '("a" . ("add" . bookmark-set))
+   '("j" . ("jump" . consult-bookmark))
+   '("" . ("jump" . consult-bookmark)))
 
   ;; lsp facet
   ;; this facet interacts with language servers
@@ -920,7 +930,7 @@ The mark is deactivated if point and mark would be inverted."
             '("U" . ("unmark all" . ibuffer-unmark-all-marks))
             '("g" . ("refresh" . ibuffer-update))
             '("s" . ("save" . ibuffer-do-save))
-            '("k" . ("kill" . ibuffer-do-delete))
+            '("DEL" . ("delete" . ibuffer-do-delete))
             '("?" . ("legend" . bristle--legend-toggle))))
 
   (gestalt-define-transient-facet
@@ -950,7 +960,7 @@ The mark is deactivated if point and mark would be inverted."
             '("i" . ("inbox" . bristle--notmuch-inbox))
             '("u" . ("unread" . bristle--notmuch-unread))
             '("a" . ("archived" . bristle--notmuch-archived))
-            '("d" . ("deleted" . bristle--notmuch-deleted))
+            '("DEL" . ("deleted" . bristle--notmuch-deleted))
             '("s" . ("search" . notmuch-tree))
             '("m" . ("send message" . notmuch-mua-new-mail))
             '("?" . ("legend" . bristle--legend-toggle))))
@@ -992,7 +1002,7 @@ The mark is deactivated if point and mark would be inverted."
             '("g" . ("refresh" . notmuch-refresh-this-buffer))
             '("*" . ("set tags" .  notmuch-show-tag))
             '("a" . ("archive" .  birstle--notmuch-archive))
-            '("d" . ("delete" .  bristle--notmuch-delete))
+            '("DEL" . ("delete" .  bristle--notmuch-delete))
             '("r" . ("reply" .  notmuch-show-reply))
             '("R" . ("reply all" .  notmuch-show-reply))
             '("?" . ("legend" . notmuch-show-reply-all))))
@@ -1216,7 +1226,7 @@ The mark is deactivated if point and mark would be inverted."
    :parent 'move
    :keymap (gestalt-make-command-map
             '("n" . ("new" . (lambda () (interactive) (org-insert-heading))))
-            '("d" . ("delete" . bristle--delete-headline))
+            '("DEL" . ("delete" . bristle--delete-headline))
             '("e" . ("edit" . org-edit-headline))
             '("<left>" . ("promote" . org-do-promote))
             '("<right>" . ("demote" . org-do-demote))
@@ -1288,7 +1298,7 @@ The mark is deactivated if point and mark would be inverted."
             '("u" . ("unordered list" . bristle--start-unordered-list))
             '("o" . ("ordered list" . bristle--start-ordered-list))
             '("n" . ("new item" . bristle--insert-item))
-            '("d" . ("delete item" . bristle--delete-item))
+            '("DEL" . ("delete item" . bristle--delete-item))
             '("e" . ("edit item" . bristle--edit-item-text))
             '("c" . ("check item" . bristle--check-item))
             '("r" . ("remove checkbox" . bristle--remove-checkbox))

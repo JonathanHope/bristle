@@ -60,6 +60,10 @@
 (require 'init-devcontainer)
 (require 'init-engine-mode)
 
+;; dashboard
+
+(require 'init-dashboard)
+
 ;; minor modes
 
 (require 'init-jinx)
@@ -365,7 +369,10 @@
     (setq insert-directory-program "gls"))
 
   ;; have tramp use remote paths
-  (add-to-list 'tramp-remote-path 'tramp-own-remote-path))
+  (add-to-list 'tramp-remote-path 'tramp-own-remote-path)
+
+  ;; keep track of recent files
+  (recentf-mode 1))
 
 ;; useful functions
 
