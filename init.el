@@ -60,10 +60,6 @@
 (require 'init-devcontainer)
 (require 'init-engine-mode)
 
-;; dashboard
-
-(require 'init-dashboard)
-
 ;; minor modes
 
 (require 'init-jinx)

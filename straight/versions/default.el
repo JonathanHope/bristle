@@ -13,7 +13,6 @@
  ("editorconfig-emacs" . "d2beb3ec2e7f84505818594124a7202d5d6d0185")
  ("el-get" . "56810ad86dc16e5286357e643ec514c85114441d")
  ("emacs-aio" . "da93523e235529fa97d6f251319d9e1d6fc24a41")
- ("emacs-dashboard" . "24774014a4c09556b568246db7f47bab9f8c2c79")
  ("emacs-eat" . "c8d54d649872bfe7b2b9f49ae5c2addbf12d3b99")
  ("emacs-fish" . "2526b1803b58cf145bc70ff6ce2adb3f6c246f89")
  ("emacs-hide-mode-line" . "ddd154f1e04d666cd004bf8212ead8684429350d")

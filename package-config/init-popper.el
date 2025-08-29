@@ -23,6 +23,7 @@
           "\\*docker-.*\\*"
           "\\*llm-scratch\\*"
           "\\*json\\*"
+          "\\*unescaped\\*"
           "\\*jwt\\*"
           "\\*dape-repl\\*"
           "\\*Mcp-Hub\\*"

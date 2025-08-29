@@ -1119,7 +1119,8 @@ The mark is deactivated if point and mark would be inverted."
   (gestalt-define-transient-facet
    utils
    '("t" . ("decode jwt" . decode-jwt))
-   '("j" . ("format json" . format-json)))
+   '("j" . ("format json" . format-json))
+   '("n" . ("format linebreaks" . unescape-newlines)))
 
   (gestalt-define-transient-facet
    search
@@ -1185,6 +1186,23 @@ The mark is deactivated if point and mark would be inverted."
                 (pop-to-buffer buffer))
             (error (message "Failed to decode JWT: %s" (error-message-string err)))))))))
 
+  (defun unescape-newlines ()
+    "Replace escaped newlines in region or kill ring."
+    (interactive)
+    (let ((content (if (region-active-p)
+                       (buffer-substring-no-properties (region-beginning) (region-end))
+                     (current-kill 0))))
+      (with-current-buffer (get-buffer-create "*unescaped*")
+        (erase-buffer)
+        (insert (replace-regexp-in-string 
+                 "\\\\n" "\n"
+                 (replace-regexp-in-string 
+                  "\\\\t" "\t"
+                  (replace-regexp-in-string 
+                   "\\\\r" "\r" content))))
+        (goto-char (point-min)))
+      (pop-to-buffer "*unescaped*")))
+  
   ;; smerge facet
   ;; this facet is used to interact with smerge
 
