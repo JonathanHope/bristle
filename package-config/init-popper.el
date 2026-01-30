@@ -32,7 +32,8 @@
           "\\*devdocs\\*"
           help-mode
           compilation-mode
-          elisp-compile-mode))
+          elisp-compile-mode
+          agent-shell-mode))
   (popper-mode +1)
 
   :custom

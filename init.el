@@ -4,6 +4,9 @@
 (set-language-environment "UTF-8")
 (set-default-coding-systems 'utf-8)
 
+;; add path I use to install tools sometimes
+(add-to-list 'exec-path "~/.local/bin")
+
 ;; enable straight
 (defvar bootstrap-version)
 (let ((bootstrap-file
@@ -150,6 +153,7 @@
 (require 'init-copilot) ;; completion (with FIM)
 (require 'init-mcp) ;; mcp server management
 (require 'init-emacs-mcp) ;; MCP server for Emacs itself
+(require 'init-agent-shell) ;; support for stuff like claude code or codex
 
 ;; configure Emacs
 

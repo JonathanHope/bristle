@@ -186,7 +186,8 @@
                        ("ibuffer" . ibuffer)
                        ("ediff" . (lambda () (call-interactively 'ediff-buffers)))
                        ("llm chat" . (lambda () (call-interactively 'gptel)))
-                       ("notmuch" . notmuch)))
+                       ("notmuch" . notmuch)
+                       ("llm agent" . agent-shell)))
            (choice (completing-read "App:" (mapcar #'car commands)))
            (command (cdr (assoc choice commands))))
       (when command
@@ -1142,7 +1143,8 @@ The mark is deactivated if point and mark would be inverted."
    '("e" . ("ediff" . ediff-buffers))
    '("g" . ("gptel" . gptel))
    '("d" . ("dired" . dired))
-   '("n" . ("notmuch" . notmuch)))
+   '("n" . ("notmuch" . notmuch))
+   '("a" . ("agent shell" . agent-shell)))
 
   (defun format-json ()
     "Format the JSON in region or kill ring."
@@ -1329,12 +1331,12 @@ The mark is deactivated if point and mark would be inverted."
             '("?" . ("legend" . bristle--legend-toggle))))
   
    (defun bristle--start-unordered-list ()
-    "Start a new unordered list."
-    (interactive)
-    (unless (org-at-item-p)
-      (beginning-of-line)
-      (insert " - ")
-      (bristle--update-statistics)))
+     "Start a new unordered list."
+     (interactive)
+     (unless (org-at-item-p)
+       (beginning-of-line)
+       (insert " - ")
+       (bristle--update-statistics)))
 
   (defun bristle--start-ordered-list ()
     "Start a new ordered list."
@@ -1353,27 +1355,20 @@ The mark is deactivated if point and mark would be inverted."
       (bristle--update-statistics)))
   
     (defun bristle--delete-item ()
-    "Delete the current list item."
-    (interactive)
-    (when (org-at-item-p)
-      (let* ((item (org-element-at-point))
-             (struct (org-list-struct)))
-        (org-list-delete-item (org-element-property :begin item) struct)
-        (org-list-write-struct struct (org-list-parents-alist struct))))
-    (bristle--update-statistics))
+      "Delete the current list item."
+      (interactive)
+      (when (org-at-item-p)
+        (let* ((item (org-element-at-point))
+               (struct (org-list-struct)))
+          (org-list-delete-item (org-element-property :begin item) struct)
+          (org-list-write-struct struct (org-list-parents-alist struct))))
+      (bristle--update-statistics))
   
     (defun bristle--check-item ()
-    "Set the current item as checked."
-    (interactive)
-    (when (org-at-item-p)
-      (save-excursion
-        (org-beginning-of-item)
-        (unless (org-at-item-checkbox-p)
-          (org-toggle-checkbox '(4)))
-        (let ((current-state (org-element-property :checkbox (org-element-at-point))))
-          (when (not (eq current-state 'on))
-            (org-toggle-checkbox)))))
-    (bristle--update-statistics))
+      "Set the current item as checked."
+      (interactive)
+      (org-toggle-checkbox)
+      (bristle--update-statistics))
   
   (defun bristle--remove-checkbox ()
     "Remove checkbox from the current item."
