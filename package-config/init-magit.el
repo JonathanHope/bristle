@@ -21,7 +21,7 @@
          ("SPC" . gestalt-leader-transient-facet))
 
   :init
-  (defvar magit-auto-revert-mode nil)
+  (defvar magit-auto-revert-mode t)
   (setq magit-display-buffer-function 'magit-display-buffer-same-window-except-diff-v1)
   (setq transient-save-history nil))
 
