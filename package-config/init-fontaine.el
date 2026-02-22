@@ -7,7 +7,7 @@
   (fontaine-presets
    '((default
      :default-family "PragmataPro Mono"
-     :default-height 105
+     :default-height 130
      :line-spacing 1
 
      :bristle-mode-line-family "PragmataPro"
@@ -23,7 +23,7 @@
 
      (present
       :inherit default
-      :default-height 130)))
+      :default-height 155)))
 
   :config
   (fontaine-set-preset 'default)

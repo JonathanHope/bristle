@@ -46,3 +46,4 @@ There is some one time setup that needs to be done:
  - The Copilot language server needs to be installed: ~copilot-install-server~
  - Copilot must also be logged into: ~copilot-login~
  - The language docs must be installed: ~devdocs-install-all~
+ - Install the nerd fonts: ~nerd-icons-install-fonts~

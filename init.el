@@ -388,12 +388,18 @@
     (mapc #'treesit-install-language-grammar (mapcar #'car treesit-language-source-alist)))
 
 (defun lookup-password (service)
-  "Look up password for SERVICE using secret-tool.
-The password can be set with `secret-tool store --label='SERVICE' SERVICE password'"
+  "Look up password for SERVICE.
+On macOS, use the Keychain via `security find-generic-password'.
+The password can be set with `security add-generic-password -s SERVICE -a SERVICE -w PASSWORD'.
+On other systems, use secret-tool.
+The password can be set with `secret-tool store --label='SERVICE' SERVICE password'."
   (string-trim
-         (shell-command-to-string 
-          (format "secret-tool lookup %s password" 
-                  (shell-quote-argument service)))))
+   (shell-command-to-string
+    (if (eq system-type 'darwin)
+        (format "security find-generic-password -s %s -w"
+                (shell-quote-argument service))
+      (format "secret-tool lookup %s password"
+              (shell-quote-argument service))))))
 
 (defun devdocs-install-all ()
   "Install all of the needed devdocs."
