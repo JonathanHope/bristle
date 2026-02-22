@@ -3,7 +3,7 @@
 (use-package popper
   :straight t
   :bind (("C-`" . popper-toggle)
-         ("C-~" . bristle--show-terminal)
+         ("C-~" . eshell)
          ("M-`" . popper-cycle)
          ("C-M-`" . popper-toggle-type))
 
@@ -61,13 +61,6 @@
        ((string= (buffer-name) "*Legend*") nil)
        ((string= (buffer-name) "*Messages*") nil)
        (t t))))
-
-  (defun bristle--show-terminal ()
-    "If in a devcontainer use that for a terminal, otherwise use eshell."
-    (interactive)
-    (if (devcontainer-running-p)
-        (devcontainer-terminal)
-      (eshell)))
   
   ;; popper and transient both try to use a dedicated bottom window
   ;; if popper is active we switch it to a dedicated top window

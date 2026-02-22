@@ -60,13 +60,13 @@
 (require 'init-dape)
 (require 'init-paredit)
 (require 'init-consult-hl-todo)
-(require 'init-devcontainer)
 (require 'init-engine-mode)
 
 ;; minor modes
 
 (require 'init-jinx)
 (require 'init-rainbow-mode)
+(require 'init-winpulse)
 
 ;; shell
 
@@ -131,7 +131,6 @@
 (require 'init-go-mode)
 (require 'init-json-mode)
 (require 'init-typescript-mode)
-(require 'init-jsdoc)
 (require 'init-yaml-mode)
 (require 'init-toml-mode)
 (require 'init-nix-mode)
@@ -235,9 +234,9 @@
      (tsx "https://github.com/tree-sitter/tree-sitter-typescript" "v0.20.2" "tsx/src")
      (json "https://github.com/tree-sitter/tree-sitter-json")
      (yaml "https://github.com/ikatyang/tree-sitter-yaml")
-     (css "https://github.com/tree-sitter/tree-sitter-css")
+     (css "https://github.com/tree-sitter/tree-sitter-css" "v0.23.2") 
      (html "https://github.com/tree-sitter/tree-sitter-html")
-     (javascript "https://github.com/tree-sitter/tree-sitter-javascript")
+     (javascript "https://github.com/tree-sitter/tree-sitter-javascript" "v0.23.1")
      (mermaid "https://github.com/monaqa/tree-sitter-mermaid")
      (go "https://github.com/tree-sitter/tree-sitter-go" "v0.20.0")
      (cmake "https://github.com/uyha/tree-sitter-cmake" "v0.2.0")
@@ -245,7 +244,7 @@
      (toml "https://github.com/tree-sitter/tree-sitter-toml")
      (nix "https://github.com/nix-community/tree-sitter-nix")
      (dockerfile "https://github.com/camdencheek/tree-sitter-dockerfile")
-     (jsdoc "https://github.com/tree-sitter/tree-sitter-jsdoc")))
+     (jsdoc "https://github.com/tree-sitter/tree-sitter-jsdoc" "v0.23.2")))
 
   ;; it was tricky to get scripts to use the ts mode for bash
   ;; I had to remap it
@@ -321,8 +320,8 @@
   (unbind-key "C-z" global-map)
   (unbind-key "C-x C-z" global-map)
   
-  ;; turn off the blinking cursor
-  (blink-cursor-mode -1)
+  ;; enable blinking cursor
+  (blink-cursor-mode 1)
 
   ;; clean up the vertical border between windows
   (defface hidden-vertical-border

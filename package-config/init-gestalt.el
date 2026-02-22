@@ -944,8 +944,7 @@ The mark is deactivated if point and mark would be inverted."
   ;; this facet is for working in JS/TS/JSX/TSX
 
   (gestalt-define-transient-facet
-   js
-   '("j" . ("jsdoc" . jsdoc)))
+   js)
 
   ;; notmuch
   ;; this facet is for email with notmuch
@@ -1081,7 +1080,6 @@ The mark is deactivated if point and mark would be inverted."
    '("u" . ("utils" . gestalt-utils-transient-facet))
    '("n" . ("notes" . soma-consult-notes))
    '("s" . ("search" . gestalt-search-transient-facet))
-   '("c" . ("dev containers" . gestalt-devcontainer-transient-facet))
    '("i" . ("interfaces" . gestalt-interface-transient-facet)))
 
   (gestalt-define-transient-facet
@@ -1127,12 +1125,6 @@ The mark is deactivated if point and mark would be inverted."
    search
    '("k" . ("kagi" . engine/search-kagi))
    '("g" . ("github" . engine/search-github)))
-
-  (gestalt-define-transient-facet
-   devcontainer
-   '("s" . ("start" . devcontainer-start))
-   '("k" . ("kill" . devcontainer-stop))
-   '("b" . ("rebuild" . devcontainer-rebuild)))
 
   (gestalt-define-transient-facet
    interface
