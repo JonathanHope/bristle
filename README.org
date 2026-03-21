@@ -43,7 +43,6 @@ There is some one time setup that needs to be done:
  - ~jinx~ requires the ~enchant~ headers; on NixOS you will need to start Emacs like this: ~nix-shell -p enchant pkg-config  --run 'emacs'~
  - A number of tree sitter grammars will need to be installed; these can be installed with ~treesit-install-all~
  - An API key for Claude is required: ~secret-tool store --label='claude' claude password~
- - The Copilot language server needs to be installed: ~copilot-install-server~
- - Copilot must also be logged into: ~copilot-login~
  - The language docs must be installed: ~devdocs-install-all~
  - Install the nerd fonts: ~nerd-icons-install-fonts~
+ - Add a shortcut to trigger ~emacs-everywher~: ~emacsclient --eval "(emacs-everywhere)"~

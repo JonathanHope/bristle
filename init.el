@@ -30,6 +30,12 @@
 ;; prevent custom from polluting my init file
 (setq custom-file "~/.emacs.d/custom.el")
 
+;; start the emacs server if not already running
+(use-package server
+  :config
+  (unless (server-running-p)
+    (server-start)))
+
 ;; configure packages
 
 ;; core
@@ -149,10 +155,13 @@
 
 (require 'init-gptel) ;; chat
 (require 'init-gptel-quick) ;; summary
-(require 'init-copilot) ;; completion (with FIM)
 (require 'init-mcp) ;; mcp server management
 (require 'init-emacs-mcp) ;; MCP server for Emacs itself
 (require 'init-agent-shell) ;; support for stuff like claude code or codex
+
+;; use to edit text anywhere
+
+(require 'init-emacs-everywhere)
 
 ;; configure Emacs
 
